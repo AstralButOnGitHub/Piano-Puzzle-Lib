@@ -64,6 +64,7 @@ end
 
 function RemotePiano:exit()
     self.show_ui = false
+    self.ui.exitlength = 0
     self.current_bookshelf.controlled = false
     self.ui.drawpostarget = -0.1
     Game.world.timer:after(1, function ()
@@ -112,9 +113,15 @@ function RemotePiano:update()
         return
     end
 
-    if Input.pressed("x", false) and self.ui.drawpos >= 1 and not self.current_bookshelf.moving then
-        self:exit()
+    if Input.down("x") and self.ui.drawpos >= 1 and not self.current_bookshelf.moving and self.current_bookshelf.controlled and not self.current_bookshelf.resetting then
+        self.ui.exitlength = MathUtils.clamp(self.ui.exitlength + 2 / 30, 0, 1)
+        if self.ui.exitlength >= 1 then
+            self:exit()
+        end
+    else
+        self.ui.exitlength = 0
     end
+
     if self.type == "twotone" then
         if Input.pressed("c", false) and self.ui.drawpos >= 1 and not self.current_bookshelf.moving then
             self.twotone_id = self.twotone_id + 1
@@ -124,8 +131,13 @@ function RemotePiano:update()
             self:setBookshelf(self.properties["target_"..self.twotone_id]["id"])
         end
     else
-        if Input.pressed("c", false) then
-            self:reset()
+        if Input.down("c") and self.ui.drawpos >= 1 and not self.current_bookshelf.moving and self.current_bookshelf.controlled and not self.current_bookshelf.resetting then
+            self.ui.resetlength = MathUtils.clamp(self.ui.resetlength + 2 / 30, 0, 1)
+            if self.ui.resetlength >= 1 then
+                self:reset()
+            end
+        else
+            self.ui.resetlength = 0
         end
     end
     local dir = nil
