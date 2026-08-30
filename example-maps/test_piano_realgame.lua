@@ -10,7 +10,7 @@ return {
   tilewidth = 40,
   tileheight = 40,
   nextlayerid = 11,
-  nextobjectid = 125,
+  nextobjectid = 126,
   properties = {},
   tilesets = {
     {
@@ -152,14 +152,29 @@ return {
       id = 3,
       name = "collision",
       class = "",
-      visible = false,
+      visible = true,
       opacity = 1,
       offsetx = 0,
       offsety = 0,
       parallaxx = 1,
       parallaxy = 1,
       properties = {},
-      objects = {}
+      objects = {
+        {
+          id = 125,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 1080,
+          y = 840,
+          width = 80,
+          height = 40,
+          rotation = 0,
+          opacity = 1,
+          visible = true,
+          properties = {}
+        }
+      }
     },
     {
       type = "objectgroup",

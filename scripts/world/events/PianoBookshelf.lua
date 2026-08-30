@@ -151,7 +151,7 @@ function PianoBookshelf:update()
         else
             self.storedinputdementia[i] = self.storedinputdementia[i] + (DTMULT / 30)
 
-            if self.storedinputdementia[i] > 0.25 then
+            if self.storedinputdementia[i] > 0.5 then
                 table.remove(self.storedinputs, i)
                 table.remove(self.storedinputdementia, i)
             end

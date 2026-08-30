@@ -5,6 +5,9 @@ local MusicGate, super = Class(Event)
 function MusicGate:init(data)
     super.init(self, data)
     self.properties = data.properties or {}
+    if self.properties["flip"] == true then
+        self.scale_x = -self.scale_x
+    end
     self.piano = Game.world:getEvent(self.properties["piano"]) or nil
     self:setSprite("world/events/music_gate")
     self.x = self.x - (self.width / 2)

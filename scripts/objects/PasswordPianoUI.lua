@@ -21,17 +21,18 @@ function PasswordPianoUI:update()
 end
 
 function PasswordPianoUI:draw()
-    local function uitext(text, xof, yof, direction, fade, red)
-        local text = love.graphics.newText(Assets.getFont("main"), text)
-
-        local x = SCREEN_WIDTH - text:getWidth() - xof
-        local y = SCREEN_HEIGHT - text:getHeight() - yof
         local diroffsets = {
             ["right"] = {1, 0},
             ["left"] = {-1, 0},
             ["up"] = {0, -1},
             ["down"] = {0, 1}
         }
+    local function uitext(text, xof, yof, direction, fade, red, forcenoclock)
+        local text = love.graphics.newText(Assets.getFont("main"), text)
+
+        local x = SCREEN_WIDTH - text:getWidth() - xof
+        local y = SCREEN_HEIGHT - text:getHeight() - yof
+
         x = x + (diroffsets[direction][1] * 260) / (self.drawpos * 260)
         y = y + (diroffsets[direction][2] * 40) / (self.drawpos * 40)
 
@@ -42,8 +43,11 @@ function PasswordPianoUI:draw()
             end
         end
         love.graphics.setColor(1, 1, 1, 1)
+        if red then
+            love.graphics.setColor(1, 1 - fade, 1 - fade, 1)
+        end
         love.graphics.draw(text, x, y)
-        if fade ~= nil then
+        if fade ~= nil and not forcenoclock == true then
             love.graphics.setColor(1, 1, 1, fade)
             if red then
                 love.graphics.setColor(1, 1 - fade, 1 - fade, fade)
@@ -51,8 +55,20 @@ function PasswordPianoUI:draw()
             love.graphics.draw(Assets.getTexture("ui/quiz_hud_timer_"..MathUtils.round((1 - fade) * 28)), x - 37, y + 3, 0, 2, 2)
         end
     end
-    uitext("[Z] : Play", 21, 44, "right")
-    uitext("Hold [X] : Exit", 21, 16, "right", self.exitlength, true)
+    if Input.usingGamepad() then
+        uitext(": Play", 21, 44, "right")
+        uitext("Hold", 123, 16, "right", self.exitlength, true)
+        uitext(": Exit", 21, 16, "right", self.exitlength, true, true)
+        love.graphics.setColor(1, 1, 1, 1)
+        local x = (diroffsets["right"][1] * 260) / (self.drawpos * 260)
+        local y = (diroffsets["right"][1] * 260) / (self.drawpos * 260)
+        love.graphics.draw(Input.getTexture("confirm"), SCREEN_WIDTH - 118 + x, SCREEN_HEIGHT - 72, 0, 2, 2)
+        love.graphics.setColor(1, 1 - self.exitlength, 1 - self.exitlength, 1)
+        love.graphics.draw(Input.getTexture("cancel"), SCREEN_WIDTH - 118 + y, SCREEN_HEIGHT - 44, 0, 2, 2)
+    else
+        uitext("[Z] : Play", 21, 44, "right")
+        uitext("Hold [X] : Exit", 21, 16, "right", self.exitlength, true)
+    end
 end
 
 return PasswordPianoUI

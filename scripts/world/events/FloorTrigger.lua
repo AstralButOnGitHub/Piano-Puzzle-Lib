@@ -45,12 +45,10 @@ function FloorTrigger:updateFloorLayers(player, onlylayers)
     end
 
     if not onlylayers then
-        -- 1. Update the active map collisions (including the cut-out bookshelf pieces)
         for _, hitbox in ipairs(Game.world.map.collision) do
             if hitbox.layer_name == "collision_floor_1" then
                 hitbox.collidable = (ladderlayer ~= 1)
-                
-                -- NEW: If this is a cut-out group, update the shapes inside it too!
+
                 if hitbox.colliders then
                     for _, child in ipairs(hitbox.colliders) do
                         child.collidable = (ladderlayer ~= 1)
@@ -59,8 +57,7 @@ function FloorTrigger:updateFloorLayers(player, onlylayers)
 
             elseif hitbox.layer_name == "collision_floor_2" then
                 hitbox.collidable = (ladderlayer == 1)
-                
-                -- NEW: Update internal shapes for floor 2
+
                 if hitbox.colliders then
                     for _, child in ipairs(hitbox.colliders) do
                         child.collidable = (ladderlayer == 1)
@@ -69,7 +66,6 @@ function FloorTrigger:updateFloorLayers(player, onlylayers)
             end
         end
 
-        -- 2. Update the cached original floor so holes are generated correctly next time
         if Game.world.map.original_floor_colliders then
             for _, hitbox in ipairs(Game.world.map.original_floor_colliders) do
                 if hitbox.layer_name == "collision_floor_1" then
@@ -89,10 +85,9 @@ function FloorTrigger:updateFloorLayers(player, onlylayers)
         end
 
         if layer_name:find("floor_1") or layer_name:find("floor_2") or (object.properties and object.properties["do_floors"]) then
-            object.layer = ladderlayer >= 1 and 0.2 or (player and player.layer or 0.2)
+            object.layer = ladderlayer == 1 and player.layer - 0.1 or player.layer
         end
 
-        -- Make sure we keep the check for "and not object:includes(Collider)" here!
         if not object:includes(Sprite) and not object:includes(Collider) then
             if layer_name:find("floor_1") or layer_name:find("floor_2") then
                 if player then

@@ -148,7 +148,7 @@ function RemotePiano:update()
         return
     end
 
-    if Input.down("x") and self.ui.drawpos >= 1 and not self.current_bookshelf.moving and self.current_bookshelf.controlled and not self.current_bookshelf.resetting then
+    if Input.down("cancel") and self.ui.drawpos >= 1 and not self.current_bookshelf.moving and self.current_bookshelf.controlled and not self.current_bookshelf.resetting then
         self.ui.exitlength = MathUtils.clamp(self.ui.exitlength + (DTMULT * 2) / 30, 0, 1)
         if self.ui.exitlength >= 1 then
             self:exit()
@@ -158,7 +158,7 @@ function RemotePiano:update()
     end
 
     if self.type == "twotone" then
-        if Input.pressed("c", false) and self.ui.drawpos >= 1 and not self.current_bookshelf.moving then
+        if Input.pressed("menu", false) and self.ui.drawpos >= 1 and not self.current_bookshelf.moving then
             self.twotone_id = self.twotone_id + 1
             if self.twotone_id > 2 then
                 self.twotone_id = 1
@@ -169,7 +169,7 @@ function RemotePiano:update()
             Game.world.timer:tween(0.15, self.player, {x = target_x}, "linear")
         end
     else
-        if Input.down("c") and self.ui.drawpos >= 1 and not self.current_bookshelf.moving and self.current_bookshelf.controlled and not self.current_bookshelf.resetting then
+        if Input.down("menu") and self.ui.drawpos >= 1 and not self.current_bookshelf.moving and self.current_bookshelf.controlled and not self.current_bookshelf.resetting then
             self.ui.resetlength = MathUtils.clamp(self.ui.resetlength + (DTMULT * 2) / 30, 0, 1)
             if self.ui.resetlength >= 1 then
                 self:reset()
@@ -189,7 +189,7 @@ function RemotePiano:update()
         dir = "right"
     end
 
-    if Input.down(dir) and Input.pressed("z", false) and self.current_bookshelf then
+    if Input.down(dir) and Input.pressed("confirm", false) and self.current_bookshelf then
         if self.current_bookshelf.moving and dir ~= nil then
             table.insert(self.current_bookshelf.storedinputs, dir)
             table.insert(self.current_bookshelf.storedinputdementia, 0)

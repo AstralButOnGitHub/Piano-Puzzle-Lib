@@ -144,7 +144,7 @@ function PasswordPiano:update()
         return
     end
 
-    if Input.down("x") and self.ui.drawpos >= 1 then
+    if Input.down("cancel") and self.ui.drawpos >= 1 then
         self.ui.exitlength = MathUtils.clamp(self.ui.exitlength + (DTMULT * 2) / 30, 0, 1)
         if self.ui.exitlength >= 1 then
             self:exit()
@@ -165,7 +165,7 @@ function PasswordPiano:update()
     end
     local skipcode = Input.down("p") and DEBUG_RENDER
 
-    if Input.pressed("z", false) and self.show_ui then
+    if Input.pressed("confirm", false) and self.show_ui then
         self.note = self.note + 1
 
         self.current_note = string.sub(self.pattern, self.note, self.note)
