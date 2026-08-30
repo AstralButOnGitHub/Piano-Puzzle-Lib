@@ -19,6 +19,7 @@ function RemotePiano:init(data)
     self.current_bookshelf = nil
     self.twotone_id = 1
     self.ui = nil
+    self.exiting = false
 end
 
 function RemotePiano:onLoad()
@@ -45,6 +46,15 @@ function RemotePiano:onInteract(player, dir)
         self.player:setState("PIANO")
         local krx = self.x
         local kry = self.y + 53
+        if self.type == "twotone" then
+            if self.twotone_id ~= 1 then
+                krx = self.x - 10
+                kry = self.y + 53
+            else
+                krx = self.x + 10
+                kry = self.y + 53
+            end
+        end
         local dist = math.max(MathUtils.round(MathUtils.dist(self.player.x, self.player.y, krx, kry) / 4), 1)
         dist = dist / 30
         self.world:setCameraAttached(false)
@@ -55,7 +65,13 @@ function RemotePiano:onInteract(player, dir)
             self.player:setFacing("up")
             self.player:resetSprite()
             self.player:setParent(self)
-            self.player:setPosition(45, 94)
+            if self.type == "twotone" then
+                if self.twotone_id ~= 1 then
+                    self.player:setPosition(35, 92)
+                else
+                    self.player:setPosition(75, 92)
+                end
+            end
             self.current_bookshelf.controlled = true
             self.current_bookshelf.piano = self
         end)
@@ -63,18 +79,35 @@ function RemotePiano:onInteract(player, dir)
 end
 
 function RemotePiano:exit()
+    if self.exiting or not self.player then
+        return
+    end
+
+    self.exiting = true
+
+    local player = self.player
+
     self.show_ui = false
     self.ui.exitlength = 0
     self.current_bookshelf.controlled = false
     self.ui.drawpostarget = -0.1
-    Game.world.timer:after(1, function ()
-        self.player:setState("WALK")
-        self.player:setFacing("down")
+
+    Game.world.timer:after(1, function()
+        if not player then
+            self.exiting = false
+            return
+        end
+
+        player:setState("WALK")
+        player:setFacing("down")
+        player:setParent(Game.world)
+        player:setPosition(self.x, self.y + 55)
+
         Game.world.can_open_menu = true
         self.world:setCameraAttached(true)
-        self.player:setParent(Game.world)
-        self.player:setPosition(self.x, self.y + 55)
+
         self.player = nil
+        self.exiting = false
     end)
 end
 
@@ -109,7 +142,7 @@ function RemotePiano:update()
         end
     end
 
-    if not self.current_bookshelf or not self.current_bookshelf.controlled then
+    if not self.current_bookshelf or not self.current_bookshelf.controlled or not self.player or self.exiting then
         return
     end
 
@@ -129,6 +162,9 @@ function RemotePiano:update()
                 self.twotone_id = 1
             end
             self:setBookshelf(self.properties["target_"..self.twotone_id]["id"])
+
+            local target_x = (self.twotone_id ~= 1) and 35 or 75
+            Game.world.timer:tween(0.15, self.player, {x = target_x}, "linear")
         end
     else
         if Input.down("c") and self.ui.drawpos >= 1 and not self.current_bookshelf.moving and self.current_bookshelf.controlled and not self.current_bookshelf.resetting then
@@ -155,6 +191,17 @@ function RemotePiano:update()
         if self.current_bookshelf:getMovinFoo(dir) then
             dir = nil
         end
+    end
+end
+
+function RemotePiano:draw()
+    super.draw(self)
+    if not DEBUG_RENDER then
+        return
+    end
+
+    if self.type == "twotone" then
+        love.graphics.print(self.twotone_id, -20, 30)
     end
 end
 

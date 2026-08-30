@@ -74,6 +74,8 @@ function PianoBookshelf:init(data)
     self.reset_timer = 0
     self.resetx = self.x
     self.resety = self.y
+
+    self.sintimer = 0
 end
 
 function PianoBookshelf:onLoad()
@@ -135,6 +137,7 @@ end
 
 function PianoBookshelf:update()
     local prev_x, prev_y = self.x, self.y
+    self.sintimer = self.sintimer + (DTMULT / (15 / 2))
 
     super.update(self)
 
@@ -200,11 +203,15 @@ function PianoBookshelf:update()
         end
     end
 
-    self:setSprite("world/events/2x2shelf_"..self.type.."_"..(self.controlled and 1 or 0))
+    self:setSprite("world/events/2x2shelf_"..self.type.."_0")
 end
 
 function PianoBookshelf:draw()
     super.draw(self)
+    if self.controlled then
+        love.graphics.setColor({1, 1, 1, 0.9 + math.sin(self.sintimer) * 0.1})
+        love.graphics.draw(Assets.getTexture("world/events/2x2shelf_"..self.type.."_1"), 0, 0, 0, 2, 2)
+    end
 
     if self.controls_alpha < 0 then
         return

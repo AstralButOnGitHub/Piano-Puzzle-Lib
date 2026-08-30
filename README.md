@@ -3,5 +3,4 @@ TODO:
 
 - input buffer
 - make sure bookshelf movement speed is acurrate
-- bookshelf selection pulse
-- octave switch player move
+- **NEEDS WORK**. octave switch player move
