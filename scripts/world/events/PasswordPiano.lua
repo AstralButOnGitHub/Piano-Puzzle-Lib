@@ -6,10 +6,13 @@ function PasswordPiano:init(data)
     super.init(self, data)
     self.properties = data.properties or {}
 
+    self:setFlag("hassolved", false)
+
     self.pattern = self.properties["pattern"] or "uurrddllcc"
     self.note = 0
     self.current_note = nil
     self.cutscene = self.properties["cutscene"] or nil
+    self.precutscene = self.properties["precutscene"] or nil
 
     self.type = self.properties["type"] or "blue"
     self:setSprite("world/events/passwordpiano_"..self.type)
@@ -160,6 +163,7 @@ function PasswordPiano:update()
     elseif Input.down("right") then
         dir = "right"
     end
+    local skipcode = Input.down("p") and DEBUG_RENDER
 
     if Input.pressed("z", false) and self.show_ui then
         self.note = self.note + 1
@@ -186,7 +190,7 @@ function PasswordPiano:update()
             self.current_note = nil
         end
 
-        if self.note == #self.pattern and self.current_note == dir_char then
+        if skipcode or (self.note == #self.pattern and self.current_note == dir_char and not self:getFlag("hassolved", false)) then
             Assets.playSound("noise")
             self.note = 0
             self.current_note = nil
@@ -203,6 +207,7 @@ function PasswordPiano:update()
             end)
             Game.world.timer:after((0.2 * #self.pattern) + 2, function()
                 Assets.playSound("sparkle_gem")
+                self:setFlag("hassolved", true)
                 self:exit(self.cutscene)
             end)
         end
@@ -239,19 +244,19 @@ function PasswordPiano:draw()
         local tex = Assets.getTexture("ui/arrow_10x10")
 
         love.graphics.setColor(dir == nil and white_color or base_color)
-        love.graphics.draw(Assets.getTexture("ui/circle_7x7"), drawx - 7, drawy - 7, 0, 2, 2)
+        love.graphics.draw(Assets.getTexture("ui/circle_7x7"), drawx - 7, drawy - 7 + math.sin((self.siner + 210) / 9) * 2, 0, 2, 2)
 
         love.graphics.setColor(dir == "up" and white_color or base_color)
-        love.graphics.draw(tex, drawx, drawy - 25, math.rad(180), 2, 2, 5, 5)
+        love.graphics.draw(tex, drawx, drawy - 25 + math.sin((self.siner + 126) / 9) * 2, math.rad(180), 2, 2, 5, 5)
 
         love.graphics.setColor(dir == "down" and white_color or base_color)
-        love.graphics.draw(tex, drawx, drawy + 25, math.rad(0), 2, 2, 5, 5)
+        love.graphics.draw(tex, drawx, drawy + 25 + math.sin((self.siner + 42) / 9) * 2, math.rad(0), 2, 2, 5, 5)
 
         love.graphics.setColor(dir == "left" and white_color or base_color)
-        love.graphics.draw(tex, drawx - 25, drawy, math.rad(90), 2, 2, 5, 5)
+        love.graphics.draw(tex, drawx - 25, drawy + math.sin((self.siner + 168) / 9) * 2, math.rad(90), 2, 2, 5, 5)
 
         love.graphics.setColor(dir == "right" and white_color or base_color)
-        love.graphics.draw(tex, drawx + 25, drawy, math.rad(270), 2, 2, 5, 5)
+        love.graphics.draw(tex, drawx + 25, drawy + math.sin((self.siner + 84) / 9) * 2, math.rad(270), 2, 2, 5, 5)
     end
 
     if not DEBUG_RENDER then
@@ -260,6 +265,7 @@ function PasswordPiano:draw()
     love.graphics.setColor(1,1,1,1)
     love.graphics.print(self.pattern, 0, -60)
     love.graphics.print(self.note.." : "..(self.current_note or "nil"), 0, -70)
+    love.graphics.print(tostring(self:getFlag("hassolved", false)), 0, -80)
 end
 
 return PasswordPiano
