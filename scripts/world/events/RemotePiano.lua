@@ -1,5 +1,5 @@
----@class MobilePiano : Event
----@overload fun(...) : MobilePiano
+---@class RemotePiano : Event
+---@overload fun(...) : RemotePiano
 local RemotePiano, super = Class(Event)
 
 function RemotePiano:init(data)
@@ -60,7 +60,6 @@ function RemotePiano:onInteract(player, dir)
         self.world:setCameraAttached(false)
         self.player:walkTo(krx, kry, dist, "up");
         Game.world.can_open_menu = false
-        self.show_ui = true
         Game.world.timer:after(dist, function()
             self.player:setFacing("up")
             self.player:resetSprite()
@@ -71,7 +70,10 @@ function RemotePiano:onInteract(player, dir)
                 else
                     self.player:setPosition(75, 92)
                 end
+            else
+                self.player:setPosition(45, 94)
             end
+            self.show_ui = true
             self.current_bookshelf.controlled = true
             self.current_bookshelf.piano = self
         end)
@@ -147,7 +149,7 @@ function RemotePiano:update()
     end
 
     if Input.down("x") and self.ui.drawpos >= 1 and not self.current_bookshelf.moving and self.current_bookshelf.controlled and not self.current_bookshelf.resetting then
-        self.ui.exitlength = MathUtils.clamp(self.ui.exitlength + 2 / 30, 0, 1)
+        self.ui.exitlength = MathUtils.clamp(self.ui.exitlength + (DTMULT * 2) / 30, 0, 1)
         if self.ui.exitlength >= 1 then
             self:exit()
         end
@@ -168,7 +170,7 @@ function RemotePiano:update()
         end
     else
         if Input.down("c") and self.ui.drawpos >= 1 and not self.current_bookshelf.moving and self.current_bookshelf.controlled and not self.current_bookshelf.resetting then
-            self.ui.resetlength = MathUtils.clamp(self.ui.resetlength + 2 / 30, 0, 1)
+            self.ui.resetlength = MathUtils.clamp(self.ui.resetlength + (DTMULT * 2) / 30, 0, 1)
             if self.ui.resetlength >= 1 then
                 self:reset()
             end
@@ -188,6 +190,11 @@ function RemotePiano:update()
     end
 
     if Input.down(dir) and Input.pressed("z", false) and self.current_bookshelf then
+        if self.current_bookshelf.moving and dir ~= nil then
+            table.insert(self.current_bookshelf.storedinputs, dir)
+            table.insert(self.current_bookshelf.storedinputdementia, 0)
+            return
+        end
         if self.current_bookshelf:getMovinFoo(dir) then
             dir = nil
         end

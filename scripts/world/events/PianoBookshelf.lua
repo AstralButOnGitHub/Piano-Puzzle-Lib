@@ -76,6 +76,8 @@ function PianoBookshelf:init(data)
     self.resety = self.y
 
     self.sintimer = 0
+    self.storedinputs = {}
+    self.storedinputdementia = {}
 end
 
 function PianoBookshelf:onLoad()
@@ -133,9 +135,28 @@ function PianoBookshelf:stopMoving(prev_x, prev_y)
     end
 
     PianoPuzzleLib:updateFloorHoles()
+    if self.storedinputs[1] ~= nil then
+        self:getMovinFoo(self.storedinputs[1])
+
+        table.remove(self.storedinputs, 1)
+        table.remove(self.storedinputdementia, 1)
+    end
 end
 
 function PianoBookshelf:update()
+    for i = #self.storedinputdementia, 1, -1 do
+        if self.storedinputs[i] == nil then
+            table.remove(self.storedinputs, i)
+            table.remove(self.storedinputdementia, i)
+        else
+            self.storedinputdementia[i] = self.storedinputdementia[i] + (DTMULT / 30)
+
+            if self.storedinputdementia[i] > 0.25 then
+                table.remove(self.storedinputs, i)
+                table.remove(self.storedinputdementia, i)
+            end
+        end
+    end
     local prev_x, prev_y = self.x, self.y
     self.sintimer = self.sintimer + (DTMULT / (15 / 2))
 
@@ -240,6 +261,8 @@ function PianoBookshelf:draw()
         love.graphics.print(vx..", "..vy, 0, -10)
         love.graphics.print((tostring(self.moving) or "false")..", "..(self.movedir or "nil"), 0, 0)
         love.graphics.print(self.reset_timer, 0, 10)
+        love.graphics.print(TableUtils.dump(self.storedinputs), 0, 20)
+        love.graphics.print(TableUtils.dump(self.storedinputdementia), 0, 30)
     end
 
     local tex = Assets.getTexture("ui/arrow_8x8")

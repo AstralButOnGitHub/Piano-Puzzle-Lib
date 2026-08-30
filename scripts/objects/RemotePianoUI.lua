@@ -13,7 +13,7 @@ function RemotePianoUI:init(piano)
 end
 
 function RemotePianoUI:update()
-    self.drawpos = MathUtils.approach(self.drawpos, self.drawpostarget, 1 / 15)
+    self.drawpos = MathUtils.approach(self.drawpos, self.drawpostarget, DTMULT / 15)
     if self.drawpos < 0 then
         self.piano.ui = nil
         self:remove()
