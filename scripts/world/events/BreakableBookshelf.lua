@@ -72,8 +72,8 @@ function BreakableBookshelf:update()
     if self.exploded then
         return
     end
-    for _, bookshelf in ipairs(Game.world.map:getEvents("MovingBookshelf")) do
-        if self:meetsObject(bookshelf) then
+    for _, bookshelf in ipairs(Game.world.map:getEvents()) do
+        if bookshelf:includes(MovingObject) and self:meetsObject(bookshelf) then
             self:holyFuckingShitExplode(bookshelf)
         end
     end

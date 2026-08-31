@@ -18,16 +18,16 @@ end
 function Map:loadHitboxes(layer)
     local hitboxes = {}
     local ox, oy = layer.offsetx or 0, layer.offsety or 0
-    for _, v in ipairs(layer.objects) do
-        local hitbox = TiledUtils.colliderFromShape(self.world, v, v.x + ox, v.y + oy, v.properties)
+    for _, object in ipairs(layer.objects) do
+        local hitbox = TiledUtils.colliderFromShape(self.world, object, object.x + ox, object.y + oy, object.properties)
         if hitbox then
             hitbox.layer_name = layer.name
 
             table.insert(hitboxes, hitbox)
-            self.hitboxes_by_id[v.id] = hitbox
+            self.hitboxes_by_id[object.id] = hitbox
 
-            self.hitboxes_by_name[v.name] = self.hitboxes_by_name[v.name] or {}
-            table.insert(self.hitboxes_by_name[v.name], hitbox)
+            self.hitboxes_by_name[object.name] = self.hitboxes_by_name[object.name] or {}
+            table.insert(self.hitboxes_by_name[object.name], hitbox)
         end
     end
     return hitboxes
