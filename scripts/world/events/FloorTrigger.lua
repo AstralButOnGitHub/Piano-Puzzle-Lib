@@ -78,9 +78,16 @@ function FloorTrigger:updateFloorLayers(player, onlylayers)
     end
 
     for _, object in ipairs(Game.stage:getObjects(Object)) do
+        if object.floor_layer_data == nil then
+            object.floor_layer_data = {
+                ["solid"] = object.solid,
+                ["collidable"] = object.collidable,
+                ["active"] = object.active
+            }
+        end
         local layer_name = object.layer_name or ""
 
-        if object.id == "PianoBookshelf" then
+        if object.id == "MovingBookshelf" then
             object.solid = ladderlayer == 0
         end
 
@@ -98,9 +105,9 @@ function FloorTrigger:updateFloorLayers(player, onlylayers)
                         object.active = false
                     else
                         object.layer = player.layer
-                        object.solid = true
-                        object.collidable = true
-                        object.active = true
+                        object.solid = object.floor_layer_data["solid"]
+                        object.collidable = object.floor_layer_data["collidable"]
+                        object.active = object.floor_layer_data["active"]
                     end
                 end
             end

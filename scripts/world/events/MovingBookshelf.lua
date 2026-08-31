@@ -78,11 +78,21 @@ function MovingBookshelf:init(data)
     self.sintimer = 0
     self.storedinputs = {}
     self.storedinputdementia = {}
+
+    self.velx, self.vely = 0, 0
 end
 
 function MovingBookshelf:onLoad()
     super.onLoad(self)
     PianoPuzzleLib:updateFloorHoles()
+end
+
+function MovingBookshelf:setSpeed(vx, vy)
+    self.velx, self.vely = vx, vy
+end
+
+function MovingBookshelf:getSpeedXY()
+    return self.velx, self.vely
 end
 
 function MovingBookshelf:getMovinFoo(dir)
@@ -108,7 +118,7 @@ function MovingBookshelf:getMovinFoo(dir)
 
         self.moving = true
         self.movedir = dir
-        local speed = 20
+        local speed = 18
         if dir == "up" then
             self:setSpeed(0, -speed)
         end
@@ -125,11 +135,14 @@ function MovingBookshelf:getMovinFoo(dir)
 end
 
 function MovingBookshelf:stopMoving(prev_x, prev_y)
-    self:setPosition(prev_x, prev_y)
+    local snap_x = math.floor(prev_x / 10 + 0.5) * 10
+    local snap_y = math.floor(prev_y / 10 + 0.5) * 10
+
     self:setSpeed(0, 0)
-    local dist = math.abs(self.x - self.start_x) + math.abs(self.y - self.start_y)
     self.moving = false
     self.movedir = nil
+    self:setPosition(snap_x, snap_y)
+    local dist = math.abs(self.x - self.start_x) + math.abs(self.y - self.start_y)
     if dist > 0 then
         Assets.playSound("wing")
     end
@@ -143,7 +156,75 @@ function MovingBookshelf:stopMoving(prev_x, prev_y)
     end
 end
 
+function MovingBookshelf:doCollision(prev_x, prev_y)
+    local dx, dy = 0, 0
+    if self.movedir == "up" then
+        dy = -80
+    elseif self.movedir == "down" then
+        dy = 80
+    elseif self.movedir == "left" then
+        dx = -80
+    elseif self.movedir == "right" then
+        dx = 80
+    end
+
+    self.newcollider.x = 1 + dx
+    self.newcollider.y = 81 + dy
+
+    local vx, vy = self:getSpeedXY()
+    if vx ~= 0 or vy ~= 0 then
+        for _, collider in ipairs(Game.world.map.piano_collision) do
+            if self.newcollider:meetsCollider(collider) then
+                if self:meetsCollider(collider) then
+                    self:stopMoving(prev_x, prev_y)
+                    return true
+                end
+            end
+        end
+
+        if self.moving then
+            for _, event in ipairs(Game.world.children) do
+                if event ~= self and event.id == "MovingBookshelf" then
+                    if self.newcollider:meetsCollider(event.collider) then
+                        if self:meetsCollider(event.collider) then
+                            self:stopMoving(prev_x, prev_y)
+                            return true
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return false
+end
+
 function MovingBookshelf:update()
+    for _ = 1, math.floor(math.abs(self.velx * DTMULT)) do
+        local last_x = self.x
+        self.x = self.x + (self.velx > 0 and 1 or -1)
+
+        if self:doCollision(last_x, self.y) then
+            self.x = last_x
+            self.velx = 0
+            break
+        end
+    end
+
+    for _ = 1, math.floor(math.abs(self.vely * DTMULT)) do
+        local last_y = self.y
+        self.y = self.y + (self.vely > 0 and 1 or -1)
+
+        if self:doCollision(self.x, last_y) then
+            self.y = last_y
+            self.vely = 0
+            break
+        end
+    end
+
+    if self.moving and self.velx == 0 and self.vely == 0 then
+		self:stopMoving(self.x, self.y)
+	end
+
     for i = #self.storedinputdementia, 1, -1 do
         if self.storedinputs[i] == nil then
             table.remove(self.storedinputs, i)
@@ -185,43 +266,8 @@ function MovingBookshelf:update()
         self.controls_alpha = math.max(0, self.controls_alpha - (DT / 1.0))
     end
 
-    local dx, dy = 0, 0
-    if self.movedir == "up" then
-        dy = -80
-    elseif self.movedir == "down" then
-        dy = 80
-    elseif self.movedir == "left" then
-        dx = -80
-    elseif self.movedir == "right" then
-        dx = 80
-    end
+    if self:doCollision(prev_x, prev_y) then
 
-    self.newcollider.x = 1 + dx
-    self.newcollider.y = 81 + dy
-
-    local vx, vy = self:getSpeedXY()
-    if vx ~= 0 or vy ~= 0 then
-        for _, collider in ipairs(Game.world.map.piano_collision) do
-            if self.newcollider:meetsCollider(collider) then
-                if self:meetsCollider(collider) then
-                    self:stopMoving(prev_x, prev_y)
-                    break
-                end
-            end
-        end
-
-        if self.moving then
-            for _, event in ipairs(Game.world.children) do
-                if event ~= self and event.id == "PianoBookshelf" then
-                    if self.newcollider:meetsCollider(event.collider) then
-                        if self:meetsCollider(event.collider) then
-                            self:stopMoving(prev_x, prev_y)
-                            break
-                        end
-                    end
-                end
-            end
-        end
     end
 
     self:setSprite("world/events/2x2shelf_"..self.type.."_0")
