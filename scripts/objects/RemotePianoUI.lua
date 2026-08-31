@@ -27,7 +27,7 @@ function RemotePianoUI:draw()
         ["up"] = {0, -1},
         ["down"] = {0, 1}
     }
-    local function uitext(text, xof, yof, direction, fade, red, forcenoclock)
+    local function uitext(text, xof, yof, direction, fade, red, forcenoclock, clockxoffset)
         local text = love.graphics.newText(Assets.getFont("main"), text)
 
         local x = SCREEN_WIDTH - text:getWidth() - xof
@@ -52,28 +52,37 @@ function RemotePianoUI:draw()
             if red then
                 love.graphics.setColor(1, 1 - fade, 1 - fade, fade)
             end
-            love.graphics.draw(Assets.getTexture("ui/quiz_hud_timer_"..MathUtils.round((1 - fade) * 28)), x - 37, y + 3, 0, 2, 2)
+            love.graphics.draw(Assets.getTexture("ui/quiz_hud_timer_"..MathUtils.round((1 - fade) * 28)), x - 37 + (clockxoffset or 0), y + 3, 0, 2, 2)
         end
     end
     if Input.usingGamepad() then
         if self.piano.type == "twotone" then
-            uitext("[Z] : Move Bookshelf", 378, 42, "left")
-            uitext("[C] : Shift Octave", 20, 42, "right")
-            uitext("Hold [X] : Exit", 235, 14, "down", self.exitlength, true)
+            uitext(": Move Bookshelf", 385, 42, "left")
+            uitext(": Shift Octave", 21, 42, "right")
+            uitext("Hold", 344, 15, "down", self.exitlength, true)
+            uitext(": Exit", 238, 15, "down", self.exitlength, true, true)
+            love.graphics.setColor(1, 1, 1, 1)
+            local righttrans = (diroffsets["right"][1] * 260) / (self.drawpos * 260)
+            local lefttrans = (diroffsets["left"][1] * 260) / (self.drawpos * 260)
+            local downtrans = (diroffsets["down"][2] * 40) / (self.drawpos * 40)
+            love.graphics.draw(Input.getTexture("confirm"), SCREEN_WIDTH - 619 + lefttrans, SCREEN_HEIGHT - 70, 0, 2, 2)
+            love.graphics.draw(Input.getTexture("menu"), SCREEN_WIDTH - 223 + righttrans, SCREEN_HEIGHT - 70, 0, 2, 2)
+            love.graphics.setColor(1, 1 - self.exitlength, 1 - self.exitlength, 1)
+            love.graphics.draw(Input.getTexture("cancel"), SCREEN_WIDTH - 339, SCREEN_HEIGHT - 42 + downtrans, 0, 2, 2)
         else
             uitext(": Play Piano", 21, 72, "right")
             uitext("Hold", 139, 44, "right")
-            uitext(": Reset", 21, 44, "right", self.exitlength, false)
+            uitext(": Reset", 21, 44, "right", self.resetlength, false, false, -89)
             uitext("Hold", 123, 16, "right", self.exitlength, true)
             uitext(": Exit", 21, 16, "right", self.exitlength, true, true)
+            love.graphics.setColor(1, 1, 1, 1)
+            local x = (diroffsets["right"][1] * 260) / (self.drawpos * 260)
+            local y = (diroffsets["right"][1] * 260) / (self.drawpos * 260)
+            love.graphics.draw(Input.getTexture("confirm"), SCREEN_WIDTH - 195 + x, SCREEN_HEIGHT - 100, 0, 2, 2)
+            love.graphics.draw(Input.getTexture("menu"), SCREEN_WIDTH - 133 + x, SCREEN_HEIGHT - 72, 0, 2, 2)
+            love.graphics.setColor(1, 1 - self.exitlength, 1 - self.exitlength, 1)
+            love.graphics.draw(Input.getTexture("cancel"), SCREEN_WIDTH - 119 + y, SCREEN_HEIGHT - 44, 0, 2, 2)
         end
-        love.graphics.setColor(1, 1, 1, 1)
-        local x = (diroffsets["right"][1] * 260) / (self.drawpos * 260)
-        local y = (diroffsets["right"][1] * 260) / (self.drawpos * 260)
-        love.graphics.draw(Input.getTexture("confirm"), SCREEN_WIDTH - 195 + x, SCREEN_HEIGHT - 100, 0, 2, 2)
-        love.graphics.draw(Input.getTexture("menu"), SCREEN_WIDTH - 133 + x, SCREEN_HEIGHT - 72, 0, 2, 2)
-        love.graphics.setColor(1, 1 - self.exitlength, 1 - self.exitlength, 1)
-        love.graphics.draw(Input.getTexture("cancel"), SCREEN_WIDTH - 119 + y, SCREEN_HEIGHT - 44, 0, 2, 2)
     else
         if self.piano.type == "twotone" then
             uitext("[Z] : Move Bookshelf", 378, 42, "left")

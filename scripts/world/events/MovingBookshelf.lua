@@ -1,8 +1,8 @@
----@class PianoBookshelf : Event
----@overload fun(...) : PianoBookshelf
-local PianoBookshelf, super = Class(Event)
+---@class MovingBookshelf : Event
+---@overload fun(...) : MovingBookshelf
+local MovingBookshelf, super = Class(Event)
 
-function PianoBookshelf:init(data)
+function MovingBookshelf:init(data)
     super.init(self, data)
     self.properties = data.properties or {}
 
@@ -80,12 +80,12 @@ function PianoBookshelf:init(data)
     self.storedinputdementia = {}
 end
 
-function PianoBookshelf:onLoad()
+function MovingBookshelf:onLoad()
     super.onLoad(self)
     PianoPuzzleLib:updateFloorHoles()
 end
 
-function PianoBookshelf:getMovinFoo(dir)
+function MovingBookshelf:getMovinFoo(dir)
     if not self.moving and not self.resetting then
         self.start_x = self.x
         self.start_y = self.y
@@ -124,7 +124,7 @@ function PianoBookshelf:getMovinFoo(dir)
     end
 end
 
-function PianoBookshelf:stopMoving(prev_x, prev_y)
+function MovingBookshelf:stopMoving(prev_x, prev_y)
     self:setPosition(prev_x, prev_y)
     self:setSpeed(0, 0)
     local dist = math.abs(self.x - self.start_x) + math.abs(self.y - self.start_y)
@@ -143,7 +143,7 @@ function PianoBookshelf:stopMoving(prev_x, prev_y)
     end
 end
 
-function PianoBookshelf:update()
+function MovingBookshelf:update()
     for i = #self.storedinputdementia, 1, -1 do
         if self.storedinputs[i] == nil then
             table.remove(self.storedinputs, i)
@@ -227,7 +227,7 @@ function PianoBookshelf:update()
     self:setSprite("world/events/2x2shelf_"..self.type.."_0")
 end
 
-function PianoBookshelf:draw()
+function MovingBookshelf:draw()
     super.draw(self)
     if self.controlled then
         love.graphics.setColor({1, 1, 1, 0.9 + math.sin(self.sintimer) * 0.1})
@@ -294,4 +294,4 @@ function PianoBookshelf:draw()
     love.graphics.setColor(COLORS.white)
 end
 
-return PianoBookshelf
+return MovingBookshelf
