@@ -156,6 +156,7 @@ function PasswordPiano:playNote(dir, shownote)
         if dir == "c" then
             arrow = Sprite("ui/circle_7x7", arrowstuff[dir][1], arrowstuff[dir][2])
         end
+        arrow.layer = 49600
         arrow.color = self.iconcolor_bright
         arrow.rotation = arrowstuff[dir][3]
         arrow.scale_x = arrow.scale_x * 2

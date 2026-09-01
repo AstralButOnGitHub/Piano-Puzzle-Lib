@@ -42,7 +42,7 @@ function MovingPiano:init(data)
     self.pianosprite.scale_x = 2
     self.pianosprite.scale_y = 2
 
-    self:setHitbox(6 -4, 22*2 - 20, 78, 16*2)
+    self:setHitbox(6, 34, 68, 16)
     self.fakeCollider = Hitbox(self, 0, 0, 80, 80)
     self.solid = true
 
@@ -64,6 +64,7 @@ function MovingPiano:init(data)
     self.faked = self:getFlag("faked", false)
 
     self.can_exit = self.properties["can_exit"] or true
+    self.hasinputbuffering = false
 end
 
 function MovingPiano:land()
@@ -96,12 +97,16 @@ function MovingPiano:stopMoving(prev_x, prev_y)
     end
 
     PianoPuzzleLib:updateFloorHoles()
-    if self.storedinputs[1] ~= nil then
+    if self.storedinputs[1] ~= nil and self.hasinputbuffering then
         self:getMovinFoo(self.storedinputs[1])
 
         table.remove(self.storedinputs, 1)
         table.remove(self.storedinputdementia, 1)
     end
+end
+
+function MovingPiano:getSortPosition()
+    return self:getRelativePos(0, 34)
 end
 
 function MovingPiano:onInteract(player, dir)
@@ -122,52 +127,13 @@ function MovingPiano:onInteract(player, dir)
             self.player:setPosition(27, 68)
 
             self.show_ui = true
+            if not self.faked and self.fakeout then
+                self.fakeout.controlled = true
+            end
             self.controlled = true
             self.piano = self
         end)
     end
-end
-
-function MovingPiano:doCollision(prev_x, prev_y)
-    local dx, dy = 0, 0
-    if self.movedir == "up" then
-        dy = -80
-    elseif self.movedir == "down" then
-        dy = 80
-    elseif self.movedir == "left" then
-        dx = -80
-    elseif self.movedir == "right" then
-        dx = 80
-    end
-
-    self.newcollider.x = 1 + dx
-    self.newcollider.y = 1 + dy
-
-    local vx, vy = self:getSpeedXY()
-    if vx ~= 0 or vy ~= 0 then
-        for _, collider in ipairs(Game.world.map.piano_collision) do
-            if self.newcollider:meetsCollider(collider) then
-                if self.fakeCollider:meetsCollider(collider) then
-                    self:stopMoving(prev_x, prev_y)
-                    return true
-                end
-            end
-        end
-
-        if self.moving then
-            for _, event in ipairs(Game.world.children) do
-                if event ~= self and event:includes(MovingObject) then
-                    if self.newcollider:meetsCollider(event.collider) then
-                        if self.fakeCollider:meetsCollider(event.collider) then
-                            self:stopMoving(prev_x, prev_y)
-                            return true
-                        end
-                    end
-                end
-            end
-        end
-    end
-    return false
 end
 
 function MovingPiano:exit()
@@ -196,10 +162,128 @@ function MovingPiano:exit()
         player:setPosition(self.x + 40, self.y + 40 + 53)
         Game.world.can_open_menu = true
         self.world:setCameraAttached(true)
+        self.player:resetSprite()
 
         self.player = nil
         self.exiting = false
     end)
+end
+
+function MovingPiano:doCollision(prev_x, prev_y)
+    if self.jumping then
+        return false
+    end
+    local dx, dy = 0, 0
+    if self.movedir == "up" then
+        dy = -80
+    elseif self.movedir == "down" then
+        dy = 80
+    elseif self.movedir == "left" then
+        dx = -80
+    elseif self.movedir == "right" then
+        dx = 80
+    end
+
+    self.newcollider.x = 1 + dx
+    self.newcollider.y = 1 + dy
+
+    local vx, vy = self:getSpeedXY()
+    if vx ~= 0 or vy ~= 0 then
+        for _, collider in ipairs(Game.world.map.piano_collision) do
+            if self.newcollider:meetsCollider(collider) then
+                if self.fakeCollider:meetsCollider(collider) then
+                    self:stopMoving(prev_x, prev_y)
+                    return true
+                end
+            end
+        end
+
+        if self.moving then
+            for _, event in ipairs(Game.world.children) do
+                if event ~= self and event:includes(MovingObject) then
+                    if self.newcollider:meetsCollider(event.fakeCollider or event.collider) then
+                        if self.fakeCollider:meetsCollider(event.fakeCollider or event.collider) then
+                            self:stopMoving(prev_x, prev_y)
+                            return true
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return false
+end
+
+function MovingPiano:playNote(dir, shownote)
+    local dir_char = "c"
+    if dir == "up" then
+        dir_char = "u"
+    elseif dir == "down" then
+        dir_char = "d"
+    elseif dir == "left" then
+        dir_char = "l"
+    elseif dir == "right" then
+        dir_char = "r"
+    else
+        dir_char = "c"
+    end
+    dir = dir_char
+    local pitch = 1
+    shownote = shownote or true
+
+    if dir == "u" then
+        pitch = 0.5
+    elseif dir == "d" then
+        pitch = 1.19
+    elseif dir == "l" then
+        pitch = 1.12
+    elseif dir == "r" then
+        pitch = 0.8928571428571428
+    end
+
+    local arrowvel = {
+        ["u"] = {0, -1},
+        ["d"] = {0, 1},
+        ["l"] = {-1, 0},
+        ["r"] = {1, 0},
+        ["c"] = {0, 0},
+    }
+    local arrowvel2 = {
+        ["u"] = {-1, -1},
+        ["d"] = {1, 1},
+        ["l"] = {-1, 1},
+        ["r"] = {1, -1},
+        ["c"] = {0, 0},
+    }
+
+    local drawx = (self.sprite.width)
+    local drawy = -36 - 46 + 10
+
+    local arrowstuff = {
+        ["u"] = {drawx, drawy - 25 + math.sin((self.siner + 126) / 9) * 2, math.rad(180)},
+        ["d"] = {drawx, drawy + 25 + math.sin((self.siner + 42) / 9) * 2, 0},
+        ["l"] = {drawx - 25, drawy + math.sin((self.siner + 168) / 9) * 2, math.rad(90)},
+        ["r"] = {drawx + 25, drawy + math.sin((self.siner + 84) / 9) * 2, math.rad(270)},
+        ["c"] = {drawx - 7, drawy - 7 + math.sin((self.siner + 210) / 9) * 2, 0},
+    }
+
+    if shownote then
+        local arrow = Sprite("ui/arrow_9x9", arrowstuff[dir][1] + -arrowvel2[dir][1] * 10, arrowstuff[dir][2] + -arrowvel2[dir][2] * 10)
+        if dir == "c" then
+            arrow = Sprite("ui/circle_7x7", arrowstuff[dir][1], arrowstuff[dir][2])
+        end
+        arrow.layer = 49600
+        arrow.color = self.iconcolor_bright
+        arrow.rotation = arrowstuff[dir][3]
+        arrow.scale_x = arrow.scale_x * 2
+        arrow.scale_y = arrow.scale_y * 2
+        local speed = 4
+        self:addChild(arrow)
+        arrow:setSpeed(arrowvel[dir][1] * speed, arrowvel[dir][2] * speed)
+        arrow:fadeOutAndRemove(0.5)
+    end
+
+    Assets.playSound("piano", 0.7, pitch)
 end
 
 function MovingPiano:update()
@@ -211,8 +295,13 @@ function MovingPiano:update()
         end
     end
     if self.controlled then
-        Game.world.camera.x = MathUtils.lerp(Game.world.camera.x, self.x + 40, 0.15)
-        Game.world.camera.y = MathUtils.lerp(Game.world.camera.y, self.y + 40, 0.15)
+        if not self.faked and self.fakeout then
+            Game.world.camera.x = MathUtils.lerp(Game.world.camera.x, self.fakeout.x, 0.15)
+            Game.world.camera.y = MathUtils.lerp(Game.world.camera.y, self.fakeout.y, 0.15)
+        else
+            Game.world.camera.x = MathUtils.lerp(Game.world.camera.x, self.x + 40, 0.15)
+            Game.world.camera.y = MathUtils.lerp(Game.world.camera.y, self.y + 40, 0.15)
+        end
     end
 
     if not self.current_bookshelf or not self.current_bookshelf.controlled or not self.player or self.exiting then
@@ -251,7 +340,12 @@ function MovingPiano:update()
         dir = "right"
     end
 
-    if Input.down(dir) and Input.pressed("confirm", false) and self.current_bookshelf then
+    if Input.down(dir) and Input.pressed("confirm", false) and self.current_bookshelf and not self.moving then
+        if self.fakeout ~= nil and not self.faked then
+            self:setFlag("faked", true)
+            self.faked = self:getFlag("faked", false)
+            self.fakeout.controlled = false
+        end
         if self.current_bookshelf.moving and dir ~= nil and (#self.current_bookshelf.storedinputs < 1 and dir ~= self.current_bookshelf.movedir) and dir ~= self.current_bookshelf.storedinputs[1] then
             table.insert(self.current_bookshelf.storedinputs, dir)
             table.insert(self.current_bookshelf.storedinputdementia, 0)
@@ -260,18 +354,7 @@ function MovingPiano:update()
         if self.current_bookshelf:getMovinFoo(dir) then
             dir = nil
         else
-            local pitch
-            if dir == "up" then
-                pitch = 0.5
-            elseif dir == "down" then
-                pitch = 1.19
-            elseif dir == "left" then
-                pitch = 1.12
-            elseif dir == "right" then
-                pitch = 0.8928571428571428
-            end
-
-            Assets.playSound(self.sound, 0.7, pitch)
+            self:playNote(dir, true)
         end
     end
 end
@@ -282,7 +365,7 @@ function MovingPiano:draw()
     local drawx = (self.sprite.width)
     local drawy = -36 - 46 + 10
 
-    if self.ui then
+    if self.ui and not (self.fakeout ~= nil and not self.faked) then
         love.graphics.setColor({0, 0, 0, self.ui.drawpos / 2})
         love.graphics.circle("fill", drawx, drawy, 44 + (math.sin(self.siner / 64) * 2))
 

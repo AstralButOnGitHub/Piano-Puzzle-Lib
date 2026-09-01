@@ -38,6 +38,8 @@ function MovingObject:init(data)
     self.yoffset = 0
     self.jumping = false
     self.shadow = {0, 0, 80, 80}
+
+    self.hasinputbuffering = true
 end
 
 function MovingObject:onLoad()
@@ -97,7 +99,7 @@ function MovingObject:stopMoving(prev_x, prev_y)
     end
 
     PianoPuzzleLib:updateFloorHoles()
-    if self.storedinputs[1] ~= nil then
+    if self.storedinputs[1] ~= nil and self.hasinputbuffering then
         self:getMovinFoo(self.storedinputs[1])
 
         table.remove(self.storedinputs, 1)
@@ -106,6 +108,9 @@ function MovingObject:stopMoving(prev_x, prev_y)
 end
 
 function MovingObject:doCollision(prev_x, prev_y)
+    if self.jumping then
+        return false
+    end
     local dx, dy = 0, 0
     if self.movedir == "up" then
         dy = -80
@@ -134,8 +139,8 @@ function MovingObject:doCollision(prev_x, prev_y)
         if self.moving then
             for _, event in ipairs(Game.world.children) do
                 if event ~= self and event:includes(MovingObject) then
-                    if self.newcollider:meetsCollider(event.collider) then
-                        if self:meetsCollider(event.collider) then
+                    if self.newcollider:meetsCollider(event.fakeCollider or event.collider) then
+                        if self:meetsCollider(event.fakeCollider or event.collider) then
                             self:stopMoving(prev_x, prev_y)
                             return true
                         end
@@ -247,6 +252,7 @@ function MovingObject:draw()
     if DEBUG_RENDER then
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.print(tostring(math.abs(self.yoffset)), 0, 120)
+        love.graphics.print(tostring(self.jumping), 0, 140)
     end
     local sx, sy, sw, sh = TableUtils.unpack(self.shadow)
     love.graphics.setColor(0, 0, 0, 0.5)

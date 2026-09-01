@@ -80,6 +80,7 @@ function MovingBookshelf:init(data)
     self.storedinputdementia = {}
 
     self.velx, self.vely = 0, 0
+    self.shadow = {0, 80, 80, 80}
 end
 
 function MovingBookshelf:getMovinFoo(dir)
