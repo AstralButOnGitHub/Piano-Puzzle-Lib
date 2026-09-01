@@ -111,8 +111,9 @@ function PasswordPiano:exit(cutscene)
     end)
 end
 
-function PasswordPiano:playNote(dir)
+function PasswordPiano:playNote(dir, shownote)
     local pitch = 1
+    shownote = shownote or true
 
     if dir == "u" then
         pitch = 0.5
@@ -124,10 +125,52 @@ function PasswordPiano:playNote(dir)
         pitch = 0.8928571428571428
     end
 
+    local arrowvel = {
+        ["u"] = {0, -1},
+        ["d"] = {0, 1},
+        ["l"] = {-1, 0},
+        ["r"] = {1, 0},
+        ["c"] = {0, 0},
+    }
+    local arrowvel2 = {
+        ["u"] = {-1, -1},
+        ["d"] = {1, 1},
+        ["l"] = {-1, 1},
+        ["r"] = {1, -1},
+        ["c"] = {0, 0},
+    }
+
+    local drawx = (self.sprite.width)
+    local drawy = -36
+
+    local arrowstuff = {
+        ["u"] = {drawx, drawy - 25 + math.sin((self.siner + 126) / 9) * 2, math.rad(180)},
+        ["d"] = {drawx, drawy + 25 + math.sin((self.siner + 42) / 9) * 2, 0},
+        ["l"] = {drawx - 25, drawy + math.sin((self.siner + 168) / 9) * 2, math.rad(90)},
+        ["r"] = {drawx + 25, drawy + math.sin((self.siner + 84) / 9) * 2, math.rad(270)},
+        ["c"] = {drawx - 7, drawy - 7 + math.sin((self.siner + 210) / 9) * 2, 0},
+    }
+
+    if shownote then
+        local arrow = Sprite("ui/arrow_10x10", arrowstuff[dir][1] + -arrowvel2[dir][1] * 10, arrowstuff[dir][2] + -arrowvel2[dir][2] * 10)
+        if dir == "c" then
+            arrow = Sprite("ui/circle_7x7", arrowstuff[dir][1], arrowstuff[dir][2])
+        end
+        arrow.color = self.iconcolor_bright
+        arrow.rotation = arrowstuff[dir][3]
+        arrow.scale_x = arrow.scale_x * 2
+        arrow.scale_y = arrow.scale_y * 2
+        local speed = 4
+        self:addChild(arrow)
+        arrow:setSpeed(arrowvel[dir][1] * speed, arrowvel[dir][2] * speed)
+        arrow:fadeOutAndRemove(0.5)
+    end
+
     Assets.playSound("piano", 0.7, pitch)
 end
 
 function PasswordPiano:update()
+    super.update(self)
     if self.show_ui then
         if self.ui == nil then
             self.ui = PasswordPianoUI(self)
