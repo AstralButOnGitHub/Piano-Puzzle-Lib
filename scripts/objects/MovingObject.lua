@@ -33,6 +33,11 @@ function MovingObject:init(data)
     self.storedinputdementia = {}
 
     self.velx, self.vely = 0, 0
+
+    self.jumpvel = 0
+    self.yoffset = 0
+    self.jumping = false
+    self.shadow = {0, 0, 80, 80}
 end
 
 function MovingObject:onLoad()
@@ -142,7 +147,34 @@ function MovingObject:doCollision(prev_x, prev_y)
     return false
 end
 
+function MovingObject:jump()
+    if not self.jumping then
+        self.jumpvel = -16
+        self.yoffset = self.jumpvel
+        self.jumping = true
+        Assets.playSound("piano_jump")
+    end
+end
+
+function MovingObject:land()
+    self.yoffset = 0
+    self.jumpvel = 0
+    self.jumping = false
+
+    Assets.playSound("impact")
+    self:shake(12, 0)
+end
+
 function MovingObject:update()
+    if self.jumping then
+        self.jumpvel = self.jumpvel + 0.65 * DTMULT
+        self.yoffset = self.yoffset + self.jumpvel
+
+        if self.yoffset >= 0 then
+            self:land()
+        end
+    end
+
     for _ = 1, math.floor(math.abs(self.velx * DTMULT)) do
         local last_x = self.x
         self.x = self.x + (self.velx > 0 and 1 or -1)
@@ -209,6 +241,19 @@ function MovingObject:update()
     else
         self.controls_alpha = math.max(0, self.controls_alpha - (DT / 1.0))
     end
+end
+
+function MovingObject:draw()
+    if DEBUG_RENDER then
+        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.print(tostring(math.abs(self.yoffset)), 0, 120)
+    end
+    local sx, sy, sw, sh = TableUtils.unpack(self.shadow)
+    love.graphics.setColor(0, 0, 0, 0.5)
+    love.graphics.rectangle("fill", sx, sy, sw, sh)
+    love.graphics.translate(0, math.floor(self.yoffset))
+    love.graphics.setColor(1, 1, 1, 1)
+    super.draw(self)
 end
 
 return MovingObject

@@ -95,7 +95,7 @@ return {
       id = 2,
       name = "decal",
       class = "",
-      visible = false,
+      visible = true,
       opacity = 1,
       offsetx = 0,
       offsety = 0,
@@ -152,29 +152,14 @@ return {
       id = 3,
       name = "collision",
       class = "",
-      visible = true,
+      visible = false,
       opacity = 1,
       offsetx = 0,
       offsety = 0,
       parallaxx = 1,
       parallaxy = 1,
       properties = {},
-      objects = {
-        {
-          id = 125,
-          name = "",
-          type = "",
-          shape = "rectangle",
-          x = 1080,
-          y = 840,
-          width = 80,
-          height = 40,
-          rotation = 0,
-          opacity = 1,
-          visible = true,
-          properties = {}
-        }
-      }
+      objects = {}
     },
     {
       type = "objectgroup",
@@ -182,7 +167,7 @@ return {
       id = 6,
       name = "collision_floor_1",
       class = "",
-      visible = true,
+      visible = false,
       opacity = 1,
       offsetx = 0,
       offsety = 0,
@@ -774,7 +759,7 @@ return {
           type = "",
           shape = "point",
           x = 960,
-          y = 520,
+          y = 510,
           width = 0,
           height = 0,
           rotation = 0,
@@ -1065,7 +1050,7 @@ return {
       id = 4,
       name = "objects_party",
       class = "",
-      visible = false,
+      visible = true,
       opacity = 1,
       offsetx = 0,
       offsety = 0,
@@ -1075,7 +1060,7 @@ return {
       objects = {
         {
           id = 72,
-          name = "PianoBookshelf",
+          name = "MovingBookshelf",
           type = "",
           shape = "point",
           x = 1080,

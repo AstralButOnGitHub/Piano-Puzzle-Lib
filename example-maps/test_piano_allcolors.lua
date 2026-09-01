@@ -10,7 +10,7 @@ return {
   tilewidth = 40,
   tileheight = 40,
   nextlayerid = 12,
-  nextobjectid = 255,
+  nextobjectid = 259,
   properties = {
     ["name"] = "Test Map - Room 2"
   },
@@ -25,6 +25,11 @@ return {
       name = "bookshelves",
       firstgid = 41,
       filename = "../../../libraries/Piano-Puzzle-Lib/scripts/world/tilesets/bookshelves.tsx"
+    },
+    {
+      name = "sanctuary",
+      firstgid = 62,
+      filename = "../tilesets/sanctuary.tsx"
     }
   },
   layers = {
@@ -62,8 +67,8 @@ return {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 0, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 0, 0, 21, 21, 21, 21, 21, 21, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 0, 21, 21, 0, 0, 0, 0, 0, 0, 21, 21, 21, 21, 21, 21, 21, 21, 21, 0, 0, 21, 21, 21, 21, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 0, 21, 21, 0, 0, 0, 0, 0, 0, 21, 21, 21, 21, 21, 21, 21, 21, 21, 0, 0, 21, 21, 21, 21, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 0, 21, 21, 0, 0, 0, 0, 0, 0, 21, 21, 21, 21, 21, 21, 21, 21, 21, 0, 0, 23, 23, 0, 17, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 0, 21, 21, 0, 0, 0, 0, 0, 0, 21, 21, 0, 21, 21, 21, 21, 21, 21, 0, 0, 23, 23, 0, 17, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 0, 21, 21, 0, 0, 0, 0, 0, 0, 21, 21, 21, 21, 21, 21, 21, 252, 252, 0, 0, 23, 23, 0, 17, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 0, 21, 21, 0, 0, 0, 0, 0, 0, 21, 21, 0, 21, 21, 21, 21, 252, 252, 0, 0, 23, 23, 0, 17, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 0, 21, 21, 0, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 0, 17, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 21, 21, 21, 0, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 0, 17, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 21, 21, 21, 0, 23, 23, 0, 0, 0, 0, 0, 0, 0, 23, 23, 23, 23, 23, 0, 0, 17, 17, 0, 17, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 0, 0,
@@ -136,7 +141,7 @@ return {
       id = 10,
       name = "collision_floor_1",
       class = "",
-      visible = true,
+      visible = false,
       opacity = 1,
       offsetx = 0,
       offsety = 0,
@@ -1416,7 +1421,7 @@ return {
           shape = "rectangle",
           x = 1880,
           y = 1160,
-          width = 400,
+          width = 320,
           height = 320,
           rotation = 0,
           opacity = 1,
@@ -1548,6 +1553,34 @@ return {
           opacity = 1,
           visible = true,
           properties = {}
+        },
+        {
+          id = 256,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 2200,
+          y = 1320,
+          width = 80,
+          height = 160,
+          rotation = 0,
+          opacity = 1,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 257,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 2200,
+          y = 1160,
+          width = 80,
+          height = 80,
+          rotation = 0,
+          opacity = 1,
+          visible = true,
+          properties = {}
         }
       }
     },
@@ -1631,7 +1664,7 @@ return {
         },
         {
           id = 30,
-          name = "PianoBookshelf",
+          name = "MovingBookshelf",
           type = "",
           shape = "point",
           x = 320,
@@ -1648,7 +1681,7 @@ return {
         },
         {
           id = 124,
-          name = "PianoBookshelf",
+          name = "MovingBookshelf",
           type = "",
           shape = "point",
           x = 880,
@@ -1665,7 +1698,7 @@ return {
         },
         {
           id = 162,
-          name = "PianoBookshelf",
+          name = "MovingBookshelf",
           type = "",
           shape = "point",
           x = 1400,
@@ -1682,7 +1715,7 @@ return {
         },
         {
           id = 163,
-          name = "PianoBookshelf",
+          name = "MovingBookshelf",
           type = "",
           shape = "point",
           x = 1280,
@@ -1699,7 +1732,7 @@ return {
         },
         {
           id = 189,
-          name = "PianoBookshelf",
+          name = "MovingBookshelf",
           type = "",
           shape = "point",
           x = 2240,
@@ -1716,7 +1749,7 @@ return {
         },
         {
           id = 190,
-          name = "PianoBookshelf",
+          name = "MovingBookshelf",
           type = "",
           shape = "point",
           x = 2240,
@@ -1733,7 +1766,7 @@ return {
         },
         {
           id = 192,
-          name = "PianoBookshelf",
+          name = "MovingBookshelf",
           type = "",
           shape = "point",
           x = 960,
@@ -2378,6 +2411,20 @@ return {
           opacity = 1,
           visible = true,
           properties = {}
+        },
+        {
+          id = 258,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 1080,
+          y = 640,
+          width = 80,
+          height = 80,
+          rotation = 0,
+          opacity = 1,
+          visible = true,
+          properties = {}
         }
       }
     },
@@ -2400,8 +2447,8 @@ return {
           name = "spawn",
           type = "",
           shape = "point",
-          x = 440,
-          y = 1200,
+          x = 1680,
+          y = 1440,
           width = 0,
           height = 0,
           rotation = 0,

@@ -37,7 +37,6 @@ function RemotePiano:setBookshelf(event_id, dont_select)
     end
     self.current_bookshelf = Game.world.map:getEvent(event_id)
     self.current_bookshelf.controlled = not dont_select
-    Kristal.Console:log(event_id)
 end
 
 function RemotePiano:onInteract(player, dir)

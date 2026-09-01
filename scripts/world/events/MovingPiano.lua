@@ -32,15 +32,15 @@ function MovingPiano:init(data)
         self.iconcolor_bright = {223/255, 60/255, 224/255, 1}
     end
 
-    local pianosprite = Sprite("world/events/movingpiano_"..self.type)
-    pianosprite.x = -4
-    pianosprite.y = -20
-    self:addChild(pianosprite)
+    self.pianosprite = Sprite("world/events/movingpiano_"..self.type)
+    self.pianosprite.x = -4
+    self.pianosprite.y = -20
+    self:addChild(self.pianosprite)
     self:setSprite("world/events/movingpianocarpet")
     self.sprite.layer = self.layer - 0.1
-    pianosprite.layer = self.layer
-    pianosprite.scale_x = 2
-    pianosprite.scale_y = 2
+    self.pianosprite.layer = self.layer
+    self.pianosprite.scale_x = 2
+    self.pianosprite.scale_y = 2
 
     self:setHitbox(6 -4, 22*2 - 20, 78, 16*2)
     self.fakeCollider = Hitbox(self, 0, 0, 80, 80)
@@ -57,32 +57,70 @@ function MovingPiano:init(data)
 
     self.newcollider = Hitbox(self, 1, 1, 78, 78)
     self.siner = 0
+
+    self.sound = self.properties["sound"] or "piano"
+
+    self.fakeout = Game.world.map:getEvent(self.properties["fakeout"])
+    self.faked = self:getFlag("faked", false)
+
+    self.can_exit = self.properties["can_exit"] or true
+end
+
+function MovingPiano:land()
+    self.yoffset = 0
+    self.jumpvel = 0
+    self.jumping = false
+
+    Assets.playSound("impact")
+    self.pianosprite:shake(12, 0)
+end
+
+function MovingPiano:stopMoving(prev_x, prev_y)
+    local snap_x = math.floor(prev_x / 10 + 0.5) * 10
+    local snap_y = math.floor(prev_y / 10 + 0.5) * 10
+    local dir = self.movedir
+
+    self:setSpeed(0, 0)
+    self.moving = false
+    self.movedir = nil
+    self:setPosition(snap_x, snap_y)
+    local dist = math.abs(self.x - self.start_x) + math.abs(self.y - self.start_y)
+    if dist > 0 then
+        Assets.playSound("bomb")
+
+        if dir == "up" or dir == "down" then
+            self.pianosprite:shake(0, 4)
+        elseif dir == "left" or dir == "right" then
+            self.pianosprite:shake(4, 0)
+        end
+    end
+
+    PianoPuzzleLib:updateFloorHoles()
+    if self.storedinputs[1] ~= nil then
+        self:getMovinFoo(self.storedinputs[1])
+
+        table.remove(self.storedinputs, 1)
+        table.remove(self.storedinputdementia, 1)
+    end
 end
 
 function MovingPiano:onInteract(player, dir)
     if dir == "up" then
         self.player = player
         self.player:setState("PIANO")
-        local krx = self.x
-        local kry = self.y + 53
+        local krx = self.x + 40
+        local kry = self.y + 40 + 53
         local dist = math.max(MathUtils.round(MathUtils.dist(self.player.x, self.player.y, krx, kry) / 4), 1)
         dist = dist / 30
         self.world:setCameraAttached(false)
         self.player:walkTo(krx, kry, dist, "up");
         Game.world.can_open_menu = false
-        Game.world.timer:after(dist, function()
+        Game.world.timer:after(dist + 0.01, function()
             self.player:setFacing("up")
-            self.player:resetSprite()
+            self.player:setSprite("piano_holdon")
             self.player:setParent(self)
-            if self.type == "twotone" then
-                if self.twotone_id ~= 1 then
-                    self.player:setPosition(35, 92)
-                else
-                    self.player:setPosition(75, 92)
-                end
-            else
-                self.player:setPosition(45, 94)
-            end
+            self.player:setPosition(27, 68)
+
             self.show_ui = true
             self.controlled = true
             self.piano = self
@@ -155,8 +193,7 @@ function MovingPiano:exit()
         player:setState("WALK")
         player:setFacing("down")
         player:setParent(Game.world)
-        player:setPosition(self.x + 4, self.y + 55 + 20)
-
+        player:setPosition(self.x + 40, self.y + 40 + 53)
         Game.world.can_open_menu = true
         self.world:setCameraAttached(true)
 
@@ -169,32 +206,20 @@ function MovingPiano:update()
     super.update(self)
     if self.show_ui then
         if self.ui == nil then
-            self.ui = RemotePianoUI(self)
+            self.ui = MovingPianoUI(self)
             Game.stage:addChild(self.ui)
         end
     end
-    if self.current_bookshelf then
-        if self.current_bookshelf.controlled == false then
-            if self.player then
-                Game.world.camera.x = MathUtils.lerp(Game.world.camera.x, self.x, 0.2)
-                Game.world.camera.y = MathUtils.lerp(Game.world.camera.y, self.y + 15, 0.2)
-            end
-        else
-            if self.camera_posx ~= nil and self.camera_posy ~= nil then
-                Game.world.camera.x = MathUtils.lerp(Game.world.camera.x, self.camera_posx, 0.15)
-                Game.world.camera.y = MathUtils.lerp(Game.world.camera.y, self.camera_posy, 0.15)
-            else
-                Game.world.camera.x = MathUtils.lerp(Game.world.camera.x, self.current_bookshelf.x, 0.15)
-                Game.world.camera.y = MathUtils.lerp(Game.world.camera.y, self.current_bookshelf.y, 0.15)
-            end
-        end
+    if self.controlled then
+        Game.world.camera.x = MathUtils.lerp(Game.world.camera.x, self.x + 40, 0.15)
+        Game.world.camera.y = MathUtils.lerp(Game.world.camera.y, self.y + 40, 0.15)
     end
 
     if not self.current_bookshelf or not self.current_bookshelf.controlled or not self.player or self.exiting then
         return
     end
 
-    if Input.down("cancel") and self.ui.drawpos >= 1 and not self.current_bookshelf.moving and self.current_bookshelf.controlled and not self.current_bookshelf.resetting then
+    if self.can_exit and Input.down("cancel") and self.ui.drawpos >= 1 and not self.current_bookshelf.moving and self.current_bookshelf.controlled then
         self.ui.exitlength = MathUtils.clamp(self.ui.exitlength + (DTMULT * 2) / 30, 0, 1)
         if self.ui.exitlength >= 1 then
             self:exit()
@@ -213,15 +238,6 @@ function MovingPiano:update()
 
             local target_x = (self.twotone_id ~= 1) and 35 or 75
             Game.world.timer:tween(0.15, self.player, {x = target_x}, "linear")
-        end
-    else
-        if Input.down("menu") and self.ui.drawpos >= 1 and not self.current_bookshelf.moving and self.current_bookshelf.controlled and not self.current_bookshelf.resetting then
-            self.ui.resetlength = MathUtils.clamp(self.ui.resetlength + (DTMULT * 2) / 30, 0, 1)
-            if self.ui.resetlength >= 1 then
-                self:reset()
-            end
-        else
-            self.ui.resetlength = 0
         end
     end
     local dir = nil
@@ -243,6 +259,19 @@ function MovingPiano:update()
         end
         if self.current_bookshelf:getMovinFoo(dir) then
             dir = nil
+        else
+            local pitch
+            if dir == "up" then
+                pitch = 0.5
+            elseif dir == "down" then
+                pitch = 1.19
+            elseif dir == "left" then
+                pitch = 1.12
+            elseif dir == "right" then
+                pitch = 0.8928571428571428
+            end
+
+            Assets.playSound(self.sound, 0.7, pitch)
         end
     end
 end
@@ -300,7 +329,6 @@ function MovingPiano:draw()
         love.graphics.print(x..", "..y, 0, -20)
         love.graphics.print(vx..", "..vy, 0, -10)
         love.graphics.print((tostring(self.moving) or "false")..", "..(self.movedir or "nil"), 0, 0)
-        love.graphics.print(self.reset_timer, 0, 10)
         love.graphics.print(TableUtils.dump(self.storedinputs), 0, 20)
         love.graphics.print(TableUtils.dump(self.storedinputdementia), 0, 30)
     end
