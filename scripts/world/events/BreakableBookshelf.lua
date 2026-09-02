@@ -34,6 +34,17 @@ function BreakableBookshelf:holyFuckingShitExplode(bookshelf)
     end
 
     if self.special == "music_gate" then
+        Assets.playSound("impact", 1, 1)
+
+        local explosion = Sprite("effects/explosion_round", -(25 / 2), 60)
+        self.layer = 49600
+        explosion.scale_x = explosion.scale_x * 2
+        explosion.scale_y = explosion.scale_y * 2
+        explosion:play(0.1, false, function(sprite)
+            sprite:remove()
+        end)
+        self:addChild(explosion)
+
         local debris_x = {-6, -3, 4, 11, 20, 43, 31, 42, 48, 58, 69}
         local debris_y = {52, 40, 34, 36, 8, 25, 71, 48, 59, 60, 36}
         local debris_hspeeds = {-2, -1.5, -1.2, -1.1, -0.5, 1.2, 0.2, 0.6, 1.35, 1.45, 2}

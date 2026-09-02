@@ -43,6 +43,7 @@ function MovingObject:init(data)
     self.shadow = {0, 0, 80, 80}
 
     self.hasinputbuffering = true
+    self.jumpedoff = false
 end
 
 function MovingObject:onLoad()
@@ -186,7 +187,7 @@ function MovingObject:update()
         self.jumpvel = self.jumpvel + 0.65 * DTMULT
         self.yoffset = self.yoffset + self.jumpvel
 
-        if self.yoffset >= 0 then
+        if self.yoffset >= 0 and not self.jumpedoff then
             self:land()
         end
     end
