@@ -69,6 +69,7 @@ function MovingPiano:init(data)
 
     self.ralshakex = 0
     self.ralsei_knocked_down = 0
+    self.dusttimer = 0
 end
 
 function MovingPiano:land()
@@ -379,6 +380,33 @@ end
 
 function MovingPiano:update()
     super.update(self)
+
+    self.dusttimer = self.dusttimer + 1
+    if self.moving and not self.jumping then
+        if (math.floor(self.dusttimer) % 2) == 0 then
+            local xOffset = 0.5
+            local yOffset = (MathUtils.random(0.6) + 0.2) * 20
+
+            if (self.vely ~= 0) then
+                xOffset = yOffset
+                yOffset = 0.5
+            else
+                yOffset = yOffset -2
+            end
+
+            local dust = Sprite("effects/climb_dust_small")
+            dust:setPosition(self.x + (xOffset * dust.width), self.y + (yOffset * dust.height))
+            dust.layer = self.layer - 0.1
+            dust.scale_x = dust.scale_x * 2
+            dust.scale_y = dust.scale_y * 2
+            dust:setSpeed(MathUtils.random(-1, 1), 0)
+            dust:play(0.1, false, function(sprite)
+                sprite:remove()
+            end)
+            Game.world:addChild(dust)
+        end
+    end
+
     self:updateRiders()
     if self.show_ui then
         if self.ui == nil then
