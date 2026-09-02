@@ -4,6 +4,7 @@ local MovingObject, super = Class(Event)
 
 function MovingObject:init(data)
     super.init(self, data)
+    self.properties = data.properties or {}
 
     self.solid = true
 
@@ -32,6 +33,8 @@ function MovingObject:init(data)
     self.storedinputs = {}
     self.storedinputdementia = {}
 
+    self.can_slow_down = self.properties["can_slow_down"] or true
+    self.max_speed = self.properties["max_speed"] or 16
     self.velx, self.vely = 0, 0
 
     self.jumpvel = 0
@@ -171,6 +174,14 @@ function MovingObject:land()
 end
 
 function MovingObject:update()
+    if self.velx ~= 0 then
+        self.velx = MathUtils.lerp(math.abs(self.velx), self.max_speed, 0.25) * MathUtils.sign(self.velx)
+    end
+
+    if self.vely ~= 0 then
+        self.vely = MathUtils.lerp(math.abs(self.vely), self.max_speed, 0.25) * MathUtils.sign(self.vely)
+    end
+
     if self.jumping then
         self.jumpvel = self.jumpvel + 0.65 * DTMULT
         self.yoffset = self.yoffset + self.jumpvel

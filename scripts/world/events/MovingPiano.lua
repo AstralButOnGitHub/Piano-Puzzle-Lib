@@ -70,6 +70,8 @@ function MovingPiano:init(data)
     self.ralshakex = 0
     self.ralsei_knocked_down = 0
     self.dusttimer = 0
+
+    self.can_slow_down = self.properties["can_slow_down"] or true
 end
 
 function MovingPiano:land()
