@@ -49,6 +49,7 @@ function MovingPiano:init(data)
     self.camera_posx = self.properties["camera_posx"] or nil
     self.camera_posy = self.properties["camera_posy"] or nil
 
+    self.characters = {}
     self.player = nil
     self.current_bookshelf = self
     self.twotone_id = 1
@@ -65,6 +66,9 @@ function MovingPiano:init(data)
 
     self.can_exit = self.properties["can_exit"] or true
     self.hasinputbuffering = false
+
+    self.ralshakex = 0
+    self.ralsei_knocked_down = 0
 end
 
 function MovingPiano:land()
@@ -111,6 +115,8 @@ end
 
 function MovingPiano:onInteract(player, dir)
     if dir == "up" then
+        self.characters = Game.world.followers
+        Game.world.followers = {}
         self.player = player
         self.player:setState("PIANO")
         local krx = self.x + 40
@@ -118,13 +124,23 @@ function MovingPiano:onInteract(player, dir)
         local dist = math.max(MathUtils.round(MathUtils.dist(self.player.x, self.player.y, krx, kry) / 4), 1)
         dist = dist / 30
         self.world:setCameraAttached(false)
-        self.player:walkTo(krx, kry, dist, "up");
+        self.player:walkTo(krx, kry, dist, "up")
+        for _, chara in ipairs(self.characters) do
+            chara:walkTo(krx, kry, dist, "up")
+        end
         Game.world.can_open_menu = false
         Game.world.timer:after(dist + 0.01, function()
             self.player:setFacing("up")
             self.player:setSprite("piano_holdon")
             self.player:setParent(self)
             self.player:setPosition(27, 68)
+            for i, chara in ipairs(self.characters) do
+                self.characters[i] = chara:convertToCharacter()
+                chara:remove()
+                chara = self.characters[i]
+                chara:setParent(self)
+                chara:setPosition(27 + (20 * i), 68 + 20)
+            end
 
             self.show_ui = true
             if not self.faked and self.fakeout then
@@ -163,9 +179,17 @@ function MovingPiano:exit()
         Game.world.can_open_menu = true
         self.world:setCameraAttached(true)
         self.player:resetSprite()
+        for i, chara in ipairs(self.characters) do
+            local follower = chara:convertToFollower()
+            chara:remove()
+            follower:setPosition(self.player.x + 20, self.player.y + 20)
+            Game.world:detachFollowers()
+            follower.history = {}
+        end
 
         self.player = nil
         self.exiting = false
+        Game.world:attachFollowersImmediate()
     end)
 end
 
@@ -286,8 +310,76 @@ function MovingPiano:playNote(dir, shownote)
     Assets.playSound("piano", 0.7, pitch)
 end
 
+function MovingPiano:updateRiders()
+    if self.controlled then
+        local myhspeed, _ = self:getSpeedXY()
+        for _, follower in ipairs(self.characters) do
+            if follower:includes(Character) then
+                if follower.actor.name == "Susie" then
+                    local susie = follower
+                    susie:setPosition(36 + 25, 80 + ((self.yoffset / 8)))
+                    if self.yoffset < 0 then
+                        susie:setSprite("fall_brace")
+                        susie.flip_x = myhspeed < 0 and self.yoffset < 0
+                    else
+                        susie:setSprite("walk/up_1")
+                    end
+                    if (self.pianosprite.graphics.shake_x >= 9) then
+                        susie:setSprite("landed_1")
+                        susie.flip_x = myhspeed < 0 and self.yoffset < 0
+                    end
+                end
+
+                if follower.actor.name == "Ralsei" then
+                    local ralsei = follower
+                    local xoff = 0
+
+                    if (self.ralshakex > 0) then
+                        xoff = (((self.ralshakex % 2) - 0.5) * 2 * self.ralshakex) - 8
+                    end
+                    if self.yoffset < 0 then
+                        if myhspeed < 0 then
+                            xoff = xoff - 10
+                        else
+                            xoff = xoff - 14
+                        end
+                    end
+                    ralsei:setPosition(25 + xoff, 80 + ((self.yoffset / 4) * 1.2))
+
+                    if self.yoffset < 0 then
+                        self.ralsei_knocked_down = 16
+
+                        if myhspeed > 0 then
+                            ralsei:setSprite("shocked_right_landed_0")
+                        else
+                            ralsei:setSprite("shocked_left_landed_0")
+                        end
+                    elseif self.ralsei_knocked_down <= 0 then
+                        ralsei:setSprite("walk/up_1")
+                    else
+                        self.ralsei_knocked_down = self.ralsei_knocked_down - 1
+
+                        if self.ralsei_knocked_down == 0 then
+                            self.ralshakex = 8
+                        end
+
+                        if myhspeed > 0 then
+                            ralsei:setSprite("shocked_right_landed_1")
+                        else
+                            ralsei:setSprite("shocked_left_landed_1")
+                        end
+
+                        self.ralshakex = self.ralshakex - 1
+                    end
+                end
+            end
+        end
+    end
+end
+
 function MovingPiano:update()
     super.update(self)
+    self:updateRiders()
     if self.show_ui then
         if self.ui == nil then
             self.ui = MovingPianoUI(self)
@@ -300,7 +392,7 @@ function MovingPiano:update()
             Game.world.camera.y = MathUtils.lerp(Game.world.camera.y, self.fakeout.y, 0.15)
         else
             Game.world.camera.x = MathUtils.lerp(Game.world.camera.x, self.x + 40, 0.15)
-            Game.world.camera.y = MathUtils.lerp(Game.world.camera.y, self.y + 40, 0.15)
+            Game.world.camera.y = MathUtils.lerp(Game.world.camera.y, self.y + 40 + (self.yoffset), 0.15)
         end
     end
 

@@ -138,7 +138,7 @@ function RemotePiano:update()
                 Game.world.camera.y = MathUtils.lerp(Game.world.camera.y, self.camera_posy, 0.15)
             else
                 Game.world.camera.x = MathUtils.lerp(Game.world.camera.x, self.current_bookshelf.x, 0.15)
-                Game.world.camera.y = MathUtils.lerp(Game.world.camera.y, self.current_bookshelf.y, 0.15)
+                Game.world.camera.y = MathUtils.lerp(Game.world.camera.y, self.current_bookshelf.y + (self.current_bookshelf.yoffset), 0.15)
             end
         end
     end
