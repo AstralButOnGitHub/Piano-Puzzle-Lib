@@ -55,19 +55,61 @@ function MovingPianoUI:draw()
             love.graphics.draw(Assets.getTexture("ui/quiz_hud_timer_"..MathUtils.round((1 - fade) * 28)), x - 37, y + 3, 0, 2, 2)
         end
     end
-    if Input.usingGamepad() then
-        uitext(": Play", 21, 44, "right")
-        uitext("Hold", 123, 16, "right", self.exitlength, true)
-        uitext(": Exit", 21, 16, "right", self.exitlength, true, true)
-        love.graphics.setColor(1, 1, 1, 1)
-        local x = (diroffsets["right"][1] * 260) / (self.drawpos * 260)
-        local y = (diroffsets["right"][1] * 260) / (self.drawpos * 260)
-        love.graphics.draw(Input.getTexture("confirm"), SCREEN_WIDTH - 118 + x, SCREEN_HEIGHT - 72, 0, 2, 2)
-        love.graphics.setColor(1, 1 - self.exitlength, 1 - self.exitlength, 1)
-        love.graphics.draw(Input.getTexture("cancel"), SCREEN_WIDTH - 118 + y, SCREEN_HEIGHT - 44, 0, 2, 2)
+    if self.piano.fakeout and not self.piano.faked then
+        if Input.usingGamepad() then
+            uitext(": Play Piano", 21, 72, "right")
+            uitext("Hold", 139, 44, "right")
+            uitext(": Reset", 21, 44, "right", self.resetlength, false, false, -89)
+
+            if self.piano.can_exit then
+                uitext("Hold", 123, 16, "right", self.exitlength, true)
+                uitext(": Exit", 21, 16, "right", self.exitlength, true, true)
+            end
+
+            love.graphics.setColor(1, 1, 1, 1)
+            local x = (diroffsets["right"][1] * 260) / (self.drawpos * 260)
+            local y = (diroffsets["right"][1] * 260) / (self.drawpos * 260)
+            love.graphics.draw(Input.getTexture("confirm"), SCREEN_WIDTH - 195 + x, SCREEN_HEIGHT - 100, 0, 2, 2)
+            love.graphics.draw(Input.getTexture("menu"), SCREEN_WIDTH - 133 + x, SCREEN_HEIGHT - 72, 0, 2, 2)
+
+            if self.piano.can_exit then
+                love.graphics.setColor(1, 1 - self.exitlength, 1 - self.exitlength, 1)
+                love.graphics.draw(Input.getTexture("cancel"), SCREEN_WIDTH - 119 + y, SCREEN_HEIGHT - 44, 0, 2, 2)
+            end
+        else
+            uitext("[Z] : Play Piano", 20, 72, "right")
+            uitext("Hold [C] : Reset", 20, 44, "right", self.resetlength, false)
+
+            if self.piano.can_exit then
+                uitext("Hold [X] : Exit", 20, 16, "right", self.exitlength, true)
+            end
+        end
     else
-        uitext("[Z] : Play", 21, 44, "right")
-        uitext("Hold [X] : Exit", 21, 16, "right", self.exitlength, true)
+        if self.piano.can_exit == true then
+            if Input.usingGamepad() then
+                uitext(": Play", 21, 44, "right")
+                uitext("Hold", 123, 16, "right", self.exitlength, true)
+                uitext(": Exit", 21, 16, "right", self.exitlength, true, true)
+                love.graphics.setColor(1, 1, 1, 1)
+                local x = (diroffsets["right"][1] * 260) / (self.drawpos * 260)
+                local y = (diroffsets["right"][1] * 260) / (self.drawpos * 260)
+                love.graphics.draw(Input.getTexture("confirm"), SCREEN_WIDTH - 118 + x, SCREEN_HEIGHT - 72, 0, 2, 2)
+                love.graphics.setColor(1, 1 - self.exitlength, 1 - self.exitlength, 1)
+                love.graphics.draw(Input.getTexture("cancel"), SCREEN_WIDTH - 118 + y, SCREEN_HEIGHT - 44, 0, 2, 2)
+            else
+                uitext("[Z] : Play", 21, 44, "right")
+                uitext("Hold [X] : Exit", 21, 16, "right", self.exitlength, true)
+            end
+        else
+            if Input.usingGamepad() then
+                uitext(": Play", 21, 16, "right")
+                love.graphics.setColor(1, 1, 1, 1)
+                local x = (diroffsets["right"][1] * 260) / (self.drawpos * 260)
+                love.graphics.draw(Input.getTexture("confirm"), SCREEN_WIDTH - 118 + x, SCREEN_HEIGHT - 44, 0, 2, 2)
+            else
+                uitext("[Z] : Play", 21, 16, "right")
+            end
+        end
     end
 end
 

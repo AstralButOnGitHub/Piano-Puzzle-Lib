@@ -64,7 +64,7 @@ function MovingPiano:init(data)
     self.fakeout = Game.world.map:getEvent(self.properties["fakeout"])
     self.faked = self:getFlag("faked", false)
 
-    self.can_exit = self.properties["can_exit"] or true
+    self.can_exit = (self.properties["can_exit"] == nil) and true or self.properties["can_exit"]
     self.hasinputbuffering = false
 
     self.ralshakex = 0
@@ -168,6 +168,9 @@ function MovingPiano:exit()
     self.ui.exitlength = 0
     self.controlled = false
     self.ui.drawpostarget = -0.1
+    if self.fakeout ~= nil and not self.faked then
+        self.fakeout.controlled = false
+    end
 
     Game.world.timer:after(1, function()
         if not player then
@@ -430,7 +433,7 @@ function MovingPiano:update()
         return
     end
 
-    if self.can_exit and Input.down("cancel") and self.ui.drawpos >= 1 and not self.current_bookshelf.moving and self.current_bookshelf.controlled then
+    if (self.can_exit and (self.fakeout ~= nil and not self.faked)) and Input.down("cancel") and self.ui.drawpos >= 1 and not self.current_bookshelf.moving and self.current_bookshelf.controlled then
         self.ui.exitlength = MathUtils.clamp(self.ui.exitlength + (DTMULT * 2) / 30, 0, 1)
         if self.ui.exitlength >= 1 then
             self:exit()

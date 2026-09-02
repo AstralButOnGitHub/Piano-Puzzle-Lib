@@ -113,7 +113,7 @@ end
 
 function PasswordPiano:playNote(dir, shownote)
     local pitch = 1
-    shownote = shownote or true
+    local shouldshownote = (shownote == nil) and true or shownote
 
     if dir == "u" then
         pitch = 0.5
@@ -151,7 +151,7 @@ function PasswordPiano:playNote(dir, shownote)
         ["c"] = {drawx - 7, drawy - 7 + math.sin((self.siner + 210) / 9) * 2, 0},
     }
 
-    if shownote then
+    if shouldshownote == true then
         local arrow = Sprite("ui/arrow_10x10", arrowstuff[dir][1] + -arrowvel2[dir][1] * 10, arrowstuff[dir][2] + -arrowvel2[dir][2] * 10)
         if dir == "c" then
             arrow = Sprite("ui/circle_7x7", arrowstuff[dir][1], arrowstuff[dir][2])
@@ -245,7 +245,7 @@ function PasswordPiano:update()
                 for i = 1, #self.pattern do
                     local dir_name = string.sub(self.pattern, i, i)
                     Game.world.timer:after(0.2 * i, function()
-                        self:playNote(dir_name)
+                        self:playNote(dir_name, false)
                     end)
                 end
             end)
