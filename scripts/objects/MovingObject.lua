@@ -73,7 +73,7 @@ function MovingObject:getMovinFoo(dir)
 
         self.moving = true
         self.movedir = dir
-        local speed = 18
+        local speed = self.max_speed / 2
         if dir == "up" then
             self:setSpeed(0, -speed)
         end

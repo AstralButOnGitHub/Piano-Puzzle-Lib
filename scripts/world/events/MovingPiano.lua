@@ -433,7 +433,10 @@ function MovingPiano:update()
         return
     end
 
-    if (self.can_exit and (self.fakeout ~= nil and not self.faked)) and Input.down("cancel") and self.ui.drawpos >= 1 and not self.current_bookshelf.moving and self.current_bookshelf.controlled then
+    if self.fakeout ~= nil then
+        self.can_exit = not self.faked
+    end
+    if self.can_exit and Input.down("cancel") and self.ui.drawpos >= 1 and not self.current_bookshelf.moving and self.current_bookshelf.controlled then
         self.ui.exitlength = MathUtils.clamp(self.ui.exitlength + (DTMULT * 2) / 30, 0, 1)
         if self.ui.exitlength >= 1 then
             self:exit()
