@@ -99,7 +99,7 @@ function MovingObject:stopMoving(prev_x, prev_y)
     self:setPosition(snap_x, snap_y)
     local dist = math.abs(self.x - self.start_x) + math.abs(self.y - self.start_y)
     if dist > 0 then
-        Assets.playSound("wing")
+        Assets.playSound("wing", 0.7, 0.8)
     end
 
     PianoPuzzleLib:updateFloorHoles()

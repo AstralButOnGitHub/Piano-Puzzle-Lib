@@ -7,7 +7,11 @@ function RemotePiano:init(data)
     self.properties = data.properties or {}
 
     self.type = self.properties["type"] or "blue"
+    self.sprite_override = self.properties["sprite"] or nil
     self:setSprite("world/events/remotepiano_"..self.type)
+    if self.sprite_override then
+        self:setSprite(self.sprite_override)
+    end
     self:setHitbox(6, 22*2, 40*2, 12*2)
     self.solid = true
     self:setOrigin(0.5, 0.5)
@@ -23,6 +27,11 @@ function RemotePiano:init(data)
 end
 
 function RemotePiano:onLoad()
+    local x, y, marker = Game.world.map:getMarker(self.properties["camera_pos"])
+    if marker ~= nil then
+        self.camera_posx = x
+        self.camera_posy = y
+    end
     if self.type == "twotone" then
         self:setBookshelf(self.properties["target_"..self.twotone_id]["id"], true)
     else
