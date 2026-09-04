@@ -81,6 +81,7 @@ function MovingBookshelf:init(data)
 
     self.velx, self.vely = 0, 0
     self.shadow = {0, 80, 80, 80}
+    self.max_speed = self.properties["max_speed"] or 14
 end
 
 function MovingBookshelf:getMovinFoo(dir)
@@ -106,7 +107,7 @@ function MovingBookshelf:getMovinFoo(dir)
 
         self.moving = true
         self.movedir = dir
-        local speed = 18
+        local speed = self.max_speed / 2
         if dir == "up" then
             self:setSpeed(0, -speed)
         end

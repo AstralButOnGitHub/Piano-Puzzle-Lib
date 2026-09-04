@@ -12,7 +12,7 @@ function PasswordPiano:init(data)
     self.note = 0
     self.current_note = nil
     self.cutscene = self.properties["cutscene"] or nil
-    self.precutscene = self.properties["precutscene"] or nil
+    -- self.precutscene = self.properties["precutscene"] or nil
 
     self.type = self.properties["type"] or "blue"
     self:setSprite("world/events/passwordpiano_"..self.type)

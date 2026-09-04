@@ -1,5 +1,5 @@
----@class RemotePianoUI : Event
----@overload fun(...) : RemotePianoUI
+---@class FloorTrigger : Event
+---@overload fun(...) : FloorTrigger
 local FloorTrigger, super = Class(Event)
 
 function FloorTrigger:init(data)

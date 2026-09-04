@@ -35,6 +35,10 @@ function MusicGate:update()
         if self.alpha <= 0 then
             self:remove()
         end
+    else
+        if self.piano ~= nil and self.piano.cutscene == nil and self.piano:getFlag("hassolved", false) == true then
+            self:unlock()
+        end
     end
 end
 

@@ -176,11 +176,11 @@ end
 
 function MovingObject:update()
     if self.velx ~= 0 then
-        self.velx = MathUtils.lerp(math.abs(self.velx), self.max_speed, 0.25) * MathUtils.sign(self.velx)
+        self.velx = (self.max_speed * MathUtils.sign(self.velx)) * DTMULT
     end
 
     if self.vely ~= 0 then
-        self.vely = MathUtils.lerp(math.abs(self.vely), self.max_speed, 0.25) * MathUtils.sign(self.vely)
+        self.vely = (self.max_speed * MathUtils.sign(self.vely)) * DTMULT
     end
 
     if self.jumping then
