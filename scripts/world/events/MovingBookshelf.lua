@@ -68,7 +68,7 @@ function MovingBookshelf:init(data)
     self.subtractive = false
     self.subcollider = Hitbox(self, 0, 0, 80, 80)
 
-    self.newcollider = Hitbox(self, 1, 81, 78, 78)
+    self.newcollider = Hitbox(self, 2, 82, 76, 76)
 
     self.resetting = false
     self.reset_timer = 0
@@ -126,6 +126,12 @@ end
 function MovingBookshelf:update()
     super.update(self)
     self:setSprite("world/events/2x2shelf_"..self.type.."_0")
+
+    if not self.moving and (self.x % 20 ~= 0 or self.y % 20 ~= 0) then
+        local snap_x = math.floor(self.x / 10 + 0.5) * 10
+        local snap_y = math.floor(self.y / 10 + 0.5) * 10
+        self:setPosition(snap_x, snap_y)
+    end
 end
 
 function MovingBookshelf:draw()

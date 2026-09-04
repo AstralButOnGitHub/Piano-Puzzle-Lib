@@ -35,7 +35,7 @@ function PianoPuzzleLib:updateFloorHoles()
         local i = 1
         while i <= #world.map.collision do
             local collider = world.map.collision[i]
-            if collider.layer_name == "collision_floor_1" or collider.layer_name == "collision_floor_2" then
+            if collider.layer_name == "collision_floor_2" then
                 table.insert(world.map.original_floor_colliders, collider)
                 table.remove(world.map.collision, i)
             else

@@ -42,6 +42,7 @@ function PasswordPiano:init(data)
         self.iconcolor_bright = {223/255, 60/255, 224/255, 1}
     end
 
+    self.characters = {}
     self.player = nil
     self.ui = nil
     self.exiting = false
@@ -57,6 +58,8 @@ function PasswordPiano:onInteract(player, dir)
 
     if dir == "up" then
         self.movingcamera = true
+        self.characters = Game.world.followers
+        Game.world:detachFollowers()
         self.player = player
         self.player:setState("PIANO")
         local krx = self.x
@@ -66,6 +69,19 @@ function PasswordPiano:onInteract(player, dir)
         self.cameramovelength = dist
         self.world:setCameraAttached(false)
         self.player:walkTo(krx, kry, dist, "up");
+        for i, chara in ipairs(self.characters) do
+            local chx = krx
+            local chy = kry
+            if i == 1 then
+                chx = chx - (22 * 2)
+                chy = chy + (19 * 2)
+            end
+            if i == 2 then
+                chx = chx + (19 * 2)
+                chy = chy + (19 * 2)
+            end
+            chara:walkTo(chx, chy, dist, "up")
+        end
         Game.world.can_open_menu = false
         Game.world.timer:after(dist, function()
             self.player:setFacing("up")
@@ -98,7 +114,17 @@ function PasswordPiano:exit(cutscene)
 
         player:setState("WALK")
         player:setFacing("down")
-
+        for _, follower in ipairs(Game.world.followers) do
+            follower.history = {}
+            follower.following = true
+            follower.returning = true
+            follower:updateIndex()
+            follower:interpolateHistory()
+        end
+        Game.world:attachFollowersImmediate()
+        for _, follower in ipairs(Game.world.followers) do
+            follower:setFacing("up")
+        end
         Game.world.can_open_menu = true
         self.world:setCameraAttached(true)
 

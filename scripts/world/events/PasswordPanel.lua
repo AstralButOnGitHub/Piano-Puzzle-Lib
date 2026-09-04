@@ -10,6 +10,7 @@ function PasswordPanel:init(data)
     self.part = self.properties["part"] or "start" -- (start, midleft, midright, end)
     self.siner = 0
     self.hintcol = self.properties["hintcolor"] or {105/255, 141/255, 230/255, 1}
+    self.piano = Game.world:getEvent(self.properties["piano"]) or nil
 
     self.flag, self.inverted, self.flag_value = TiledUtils.parseFlagProperties("flag", "inverted", "value", nil, self.properties)
 
@@ -22,10 +23,18 @@ end
 
 function PasswordPanel:onLoad()
     self.layer = self.layer + 0.1
+    if self.piano ~= nil and self.piano:getFlag("hassolved", false) == true then
+        self:remove()
+    end
     super.onLoad(self)
 end
 
 function PasswordPanel:updateActive()
+    if self.piano ~= nil and self.piano:getFlag("hassolved", false) == true then
+        self.is_active = false
+        return
+    end
+
     local success = false
 
     if self.flag then
