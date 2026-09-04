@@ -1,12 +1,16 @@
 ![alt text](logo.png)
 # Piano Puzzle Lib
-This library implements all the piano puzzles from Chapter 4!
+This library implements all the piano puzzles from Deltarune Chapter 4!
 
 
-***EVERYTHING IS SUBJECT TO CHANGE.***
+**Anything shown or said here may change.**
+**If you believe any information here is outdated or incorrect, please let me know!**
 
 ---
-# Moving Bookshelf Puzzles
+
+# Sections
+
+## Moving Bookshelf Puzzles
 
 To make a moving bookshelf puzzle you'll need these things:
 
@@ -45,16 +49,16 @@ This allows the player to walk on what would usually be the floor below (because
 
 ![alt text](image-6.png)
 
-# Password Pianos
+## Password Pianos
 ![alt text](image-7.png)
 (thankfully) These are much simpler.
 
-On an object layer, Make an event called ``PasswordPiano`` and give it the string property ``"pattern"``
+On an object layer, Make a ``PasswordPiano`` event and give it the string property ``"pattern"``
 This is the password that the piano will use.
 Passwords are made up of these characters: ``u, d, l, r, c`` which represents: ``up, down, left, right, center``
 You should now be able to see it in game but how will you tell the players what the password *is*?
 
-Make a new event called PasswordPanel and give it the following properties:
+Make a new PasswordPanel event and give it the following properties:
 - ``"pattern"`` (``string``) should be the first or second half of your password.
 - ``"part"`` (``string``) can be ``start`` or ``end`` (this shows the music sheet icon on the left or the right)
 - ``"flag"`` (``string``) the flag that makes it appear. (You can either use a ``setflag`` event or make your own thing to change it.)
@@ -62,6 +66,28 @@ Make a new event called PasswordPanel and give it the following properties:
 - ``"piano"`` (``object``) the piano it's tied to. (This makes the panel disappear after inputting the password.)
 
 ![alt text](image-8.png)
+
+Also, You can make a ``MusicGat`` event with an object property called ``"piano"`` which should (obviously) be your piano.
+This is the gate that's used 1 time. (I made this one in a day it was so simple)
+![alt text](image-9.png)
+
+## Moving Piano Segments
+Similar to the Moving Bookshelf Puzzles, Make your pianocollision layer (this is the walls, blah blah blah)
+Now the fun stuff, Make a ``MovingPiano`` event.
+![alt text](image-10.png)
+
+You can give it an object property called ``fakeout`` which should be a MovingBookshelf event.
+This is like the first Moving Piano in the 2nd Sanctuary.
+![alt text](image-11.png)
+
+Also, You can make a ``PianoSpeedZone`` event which will change the piano's max speed when entering.
+This takes in a float property called ``"max_speed"`` (do I need to explain this?)
+
+Also Also, You can make a ``PianoJumpArea`` event which will make the piano jump when entering.
+![alt text](image-12.png)
+
+Also Also ***ALSO***, You can make a ``PianoExit`` event which will make the party jump off of the piano when entering. (this also makes the piano fly into oblivion)
+![alt text](image-13.png)
 
 # Object Properties
 ### RemotePiano
