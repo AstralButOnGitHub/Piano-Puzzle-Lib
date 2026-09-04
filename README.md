@@ -6,9 +6,9 @@ This library implements all the piano puzzles from Chapter 4!
 ***EVERYTHING IS SUBJECT TO CHANGE.***
 
 ---
-## Moving Bookshelf Puzzles
+# Moving Bookshelf Puzzles
 
-To make a moving bookshelf puzzle you'll need 3(ish) things.
+To make a moving bookshelf puzzle you'll need these things:
 
 A ``RemotePiano`` event with an object property ``"target"`` being a ``MovingBookshelf`` event, and an object layer called ``pianocollision``
 
@@ -35,7 +35,35 @@ On your ``objects_party`` layer, make a rectangle event called FloorTrigger.
 This will be where the player can move up and down the floors.
 ![alt text](image-4.png)
 
-## Object Properties
+Now, why did I say ``collision_floor_2`` was special?
+As you could probably guess, It's the walls the player can collide with on floor 2, BUT;
+Not only are the rectangles walls for the player, they're the walls of the bookshelves.
+
+That probably doesn't make much sense when written but I'll try.
+The bookshelves "subtract" a 2x2 tile hole at it's current position.
+This allows the player to walk on what would usually be the floor below (because it's cutting a hole in the collision)
+
+![alt text](image-6.png)
+
+# Password Pianos
+![alt text](image-7.png)
+(thankfully) These are much simpler.
+
+On an object layer, Make an event called ``PasswordPiano`` and give it the string property ``"pattern"``
+This is the password that the piano will use.
+Passwords are made up of these characters: ``u, d, l, r, c`` which represents: ``up, down, left, right, center``
+You should now be able to see it in game but how will you tell the players what the password *is*?
+
+Make a new event called PasswordPanel and give it the following properties:
+- ``"pattern"`` (``string``) should be the first or second half of your password.
+- ``"part"`` (``string``) can be ``start`` or ``end`` (this shows the music sheet icon on the left or the right)
+- ``"flag"`` (``string``) the flag that makes it appear. (You can either use a ``setflag`` event or make your own thing to change it.)
+- ``"value"`` (``any``) the value the flag has to be to make it appear.
+- ``"piano"`` (``object``) the piano it's tied to. (This makes the panel disappear after inputting the password.)
+
+![alt text](image-8.png)
+
+# Object Properties
 ### RemotePiano
 | Property | Type | Default | Values | Description |
 |-|-|-|-|-|
