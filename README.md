@@ -4,7 +4,7 @@ This library implements all the piano puzzles from Deltarune Chapter 4!
 
 
 **Anything shown or said here may change.**
-**If you believe any information here is outdated or incorrect, please let me know!**
+**If you believe any information here is outdated or incorrect, please make an Issue!**
 
 ---
 ### Known Issues:
@@ -21,7 +21,7 @@ This library implements all the piano puzzles from Deltarune Chapter 4!
 
 To make a moving bookshelf puzzle you'll need these things:
 
-A ``RemotePiano`` event with an object property ``"target"`` being a ``MovingBookshelf`` event, and an object layer called ``pianocollision``
+A [``RemotePiano``](scripts/world/events/RemotePiano.lua) event with an object property ``"target"`` being a [``MovingBookshelf``](scripts/world/events/MovingBookshelf.lua) event, and an object layer called ``pianocollision``
 
 In your pianocollision layer, Insert rectangles.
 These will act as the boundaries to where the MovingBookshelf can move.
@@ -64,12 +64,12 @@ This allows the player to walk on what would usually be the floor below (because
 
 (thankfully) These are much simpler.
 
-On an object layer, Make a ``PasswordPiano`` event and give it the string property ``"pattern"``
+On an object layer, Make a [``PasswordPiano``](scripts/world/events/PasswordPiano.lua) event and give it the string property ``"pattern"``
 This is the password that the piano will use.
 Passwords are made up of these characters: ``u, d, l, r, c`` which represents: ``up, down, left, right, center``
 You should now be able to see it in game but how will you tell the players what the password *is*?
 
-Make a new PasswordPanel event and give it the following properties:
+Make a new [``PasswordPanel``](scripts/world/events/PasswordPanel.lua) event and give it the following properties:
 - ``"pattern"`` (``string``) should be the first or second half of your password.
 - ``"part"`` (``string``) can be ``start`` or ``end`` (this shows the music sheet icon on the left or the right)
 - ``"flag"`` (``string``) the flag that makes it appear. (You can either use a ``setflag`` event or make your own thing to change it.)
@@ -78,43 +78,43 @@ Make a new PasswordPanel event and give it the following properties:
 
 ![alt text](README-Images/image-8.png)
 
-Also, You can make a ``MusicGate`` event with an object property called ``"piano"`` which should (obviously) be your piano.
+Also, You can make a [``MusicGate``](scripts/world/events/MusicGate.lua) event with an object property called ``"piano"`` which should (obviously) be your piano.
 This is the gate that's used 1 time. (I made this one in a day it was so simple)
 
 ![alt text](README-Images/image-9.png)
 
 ## Moving Pianos
 Similar to the Moving Bookshelf Puzzles, Make your pianocollision layer (this is the walls, blah blah blah)
-Now the fun stuff, Make a ``MovingPiano`` event.
+Now the fun stuff, Make a [``MovingPiano``](scripts/world/events/MovingPiano.lua) event.
 
 ![alt text](README-Images/image-10.png)
 
-You can give it an object property called ``fakeout`` which should be a MovingBookshelf event.
+You can give it an object property called ``fakeout`` which should be a [``MovingBookshelf``](scripts/world/events/MovingBookshelf.lua) event.
 This is like the first Moving Piano in the 2nd Sanctuary.
 
 ![alt text](README-Images/image-11.png)
 
 To keep with the 2nd Sanctuary additions,
-you can make a ``BreakableBookshelf`` event which will spawn in a.. you guessed it.. breakable bookshelf.
+you can make a [``BreakableBookshelf``](scripts/world/events/BreakableBookshelf.lua) event which will spawn in a.. you guessed it.. breakable bookshelf.
 You can set it's string property ``"special"`` to "music_gate" to switch it's texture (and particles) to the breakable music gate found in 3rd Sanctuary.
 There's also a string property ``"texture"`` which just overwrites the texture.
 
 ![alt text](README-Images/image-14.png) ![alt text](README-Images/image-15.png)
 
 
-Also, You can make a ``PianoSpeedZone`` event which will change the piano's max speed when entering.
+Also, You can make a [``PianoSpeedZone``](scripts/world/events/PianoSpeedZone.lua) event which will change the piano's max speed when entering.
 This takes in a float property called ``"max_speed"`` (do I need to explain this?)
 
-Also Also, You can make a ``PianoJumpArea`` event which will make the piano jump when entering.
+Also Also, You can make a [``PianoJumpArea``](scripts/world/events/PianoJumpArea.lua) event which will make the piano jump when entering.
 
 ![alt text](README-Images/image-12.png)
 
-Also Also ***ALSO***, You can make a ``PianoExit`` event which will make the party jump off of the piano when entering. (this also makes the piano fly into oblivion)
+Also Also ***ALSO***, You can make a [``PianoExit``](scripts/world/events/PianoExit.lua) event which will make the party jump off of the piano when entering. (this also makes the piano fly into oblivion)
 
 ![alt text](README-Images/image-13.png)
 
 # Object Properties
-### BreakableBookshelf
+### [BreakableBookshelf](scripts/world/events/BreakableBookshelf.lua)
 Breaks when a MovingObject enters it.
 | Property | Type | Default | Values | Description |
 |-|-|-|-|-|
@@ -122,13 +122,13 @@ Breaks when a MovingObject enters it.
 | `slow_down` | `boolean` | `true` | `true, false` | `Should slow down the MovingObject.` |
 | `texture` | `string` | `nil` | `any sprite` | `Overrides the current sprite.` |
 
-### FloorTrigger
+### [FloorTrigger](scripts/world/events/FloorTrigger.lua)
 Moves the player up a floor when entered.
 | Property | Type | Default | Values | Description |
 |-|-|-|-|-|
 | `amount` | `int` | `1` | `any integer` | `How many floors to move up. (useless because right now only 2 floors are supported.)` |
 
-### MovingBookshelf
+### [MovingBookshelf](scripts/world/events/MovingBookshelf.lua)
 The moving bookshelves you can walk on when on floor 2.
 | Property | Type | Default | Values | Description |
 |-|-|-|-|-|
@@ -139,7 +139,7 @@ The moving bookshelves you can walk on when on floor 2.
 | `max_speed` | `float` | `14` | `any float` | `The max speed the bookshelf can move.` |
 | `can_slow_down` | `boolean` | `true` | `true, false` | `Can the bookshelf be slowed down by BreakableBookshelf.` |
 
-### MovingPiano
+### [MovingPiano](scripts/world/events/MovingPiano.lua)
 The moving pianos you jump around in.
 | Property | Type | Default | Values | Description |
 |-|-|-|-|-|
@@ -152,14 +152,14 @@ The moving pianos you jump around in.
 | `can_slow_down` | `boolean` | `true` | `true, false` | `Can the piano be slowed down by BreakableBookshelf.` |
 | `can_exit` | `boolean` | `true` | `true, false` | `Can the piano be slowed down by BreakableBookshelf.` |
 
-### MusicGate
+### [MusicGate](scripts/world/events/MusicGate.lua)
 The gate that requires you to input a password with the piano.
 | Property | Type | Default | Values | Description |
 |-|-|-|-|-|
 | `flip` | `boolean` | `false` | `true, false` | `Flips the sprite` |
 | `piano` | `object` | `nil` | `PasswordPiano` | `The linked PasswordPiano.` |
 
-### PasswordPanel
+### [PasswordPanel](scripts/world/events/PasswordPanel.lua)
 The floating list of notes in a password.
 | Property | Type | Default | Values | Description |
 |-|-|-|-|-|
@@ -170,7 +170,7 @@ The floating list of notes in a password.
 | `flag_value` | `any` | `nil` | `any value` | `The "value the flag has to be.` |
 | `inverted` | `boolean` | `false` | `true, false` | `Should the value be inverted` |
 
-### PasswordPiano
+### [PasswordPiano](scripts/world/events/PasswordPiano.lua)
 The piano you play sick beatz with.
 | Property | Type | Default | Values | Description |
 |-|-|-|-|-|
@@ -181,25 +181,25 @@ The piano you play sick beatz with.
 | `iconcolor` | `table (float)` | `COLORS.black` | `any RGBA table` | `The arrows' color when inactive.` |
 | `iconcolor_bright` | `table (float)` | `COLORS.gray` | `any RGBA table` | `The arrows' color when active.` |
 
-### PianoExit
+### [PianoExit](scripts/world/events/PianoExit.lua)
 Makes characters jump off of MovingPiano's when entered.
 | Property | Type | Default | Values | Description |
 |-|-|-|-|-|
 | `(target_1, target_2, ...)` | `marker` | `nil` | `any marker` | `The position the character should jump to.` |
 
-### PianoJumpArea
+### [PianoJumpArea](scripts/world/events/PianoJumpArea.lua)
 Makes MovingPiano's jump when entered.
 | No Properties |
 |-|
 
-### PianoSpeedZone
+### [PianoSpeedZone](scripts/world/events/PianoSpeedZone.lua)
 Set's the MovingObject's max speed when entered.
 | Property | Type | Default | Values | Description |
 |-|-|-|-|-|
 | `max_speed` | `float` | `nil` | `any float` | `The target speed.` |
 
 
-### RemotePiano
+### [RemotePiano](scripts/world/events/RemotePiano.lua)
 The piano you use to move bookshelves.
 | Property | Type | Default | Values | Description |
 |-|-|-|-|-|
