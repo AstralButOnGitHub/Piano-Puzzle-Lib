@@ -7,6 +7,13 @@ This library implements all the piano puzzles from Deltarune Chapter 4!
 **If you believe any information here is outdated or incorrect, please let me know!**
 
 ---
+### Known Issues:
+- Follower's layer isn't properly updated when moving down a FloorTrigger
+- Timings for certain things are off (input delays, input buffering, UI transitioning, character walkTo's, etc)
+- While DEBUG RENDERING, floor collisions always render. (correct behaviour would be only rendering when player is on their floor.)
+- BreakableBookshelf doesn't properly slow down MovingObjects.
+
+---
 
 # Sections
 
@@ -18,6 +25,7 @@ A ``RemotePiano`` event with an object property ``"target"`` being a ``MovingBoo
 
 In your pianocollision layer, Insert rectangles.
 These will act as the boundaries to where the MovingBookshelf can move.
+
 ![alt text](README-Images/image-3.png)
 
 This is cool but what how do we stand on the bookshelves?
@@ -27,6 +35,7 @@ You'll want to make 4 new object layers.
 ``objects_floor_1``, ``objects_floor_2``, ``collision_floor_1``, ``collision_floor_2``
 
 ![alt text](README-Images/image-5.png)
+
 Any objects within these layers will change depending on your current layer.
 
 You should make ``collision_floor_1`` match what you would normally have on the ``collision`` layer.
@@ -37,6 +46,7 @@ But, how do we get to layer 2?
 
 On your ``objects_party`` layer, make a rectangle event called FloorTrigger.
 This will be where the player can move up and down the floors.
+
 ![alt text](README-Images/image-4.png)
 
 Now, why did I say ``collision_floor_2`` was special?
@@ -51,6 +61,7 @@ This allows the player to walk on what would usually be the floor below (because
 
 ## Password Pianos
 ![alt text](README-Images/image-7.png)
+
 (thankfully) These are much simpler.
 
 On an object layer, Make a ``PasswordPiano`` event and give it the string property ``"pattern"``
@@ -69,21 +80,25 @@ Make a new PasswordPanel event and give it the following properties:
 
 Also, You can make a ``MusicGate`` event with an object property called ``"piano"`` which should (obviously) be your piano.
 This is the gate that's used 1 time. (I made this one in a day it was so simple)
+
 ![alt text](README-Images/image-9.png)
 
 ## Moving Pianos
 Similar to the Moving Bookshelf Puzzles, Make your pianocollision layer (this is the walls, blah blah blah)
 Now the fun stuff, Make a ``MovingPiano`` event.
+
 ![alt text](README-Images/image-10.png)
 
 You can give it an object property called ``fakeout`` which should be a MovingBookshelf event.
 This is like the first Moving Piano in the 2nd Sanctuary.
+
 ![alt text](README-Images/image-11.png)
 
 To keep with the 2nd Sanctuary additions,
 you can make a ``BreakableBookshelf`` event which will spawn in a.. you guessed it.. breakable bookshelf.
 You can set it's string property ``"special"`` to "music_gate" to switch it's texture (and particles) to the breakable music gate found in 3rd Sanctuary.
 There's also a string property ``"texture"`` which just overwrites the texture.
+
 ![alt text](README-Images/image-14.png) ![alt text](README-Images/image-15.png)
 
 
@@ -91,9 +106,11 @@ Also, You can make a ``PianoSpeedZone`` event which will change the piano's max 
 This takes in a float property called ``"max_speed"`` (do I need to explain this?)
 
 Also Also, You can make a ``PianoJumpArea`` event which will make the piano jump when entering.
+
 ![alt text](README-Images/image-12.png)
 
 Also Also ***ALSO***, You can make a ``PianoExit`` event which will make the party jump off of the piano when entering. (this also makes the piano fly into oblivion)
+
 ![alt text](README-Images/image-13.png)
 
 # Object Properties
