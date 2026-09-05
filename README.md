@@ -1,6 +1,6 @@
 ![alt text](logo.png)
 # Piano Puzzle Lib
-This library implements all the piano puzzles from Deltarune Chapter 4!
+A Kristal library that recreates the Piano and Bookshelf puzzles from Deltarune Chapter 4.
 
 
 **Anything shown or said here may change.**
