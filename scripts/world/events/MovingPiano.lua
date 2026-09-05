@@ -468,7 +468,7 @@ function MovingPiano:update()
         dir = "right"
     end
 
-    if Input.down(dir) and Input.pressed("confirm", false) and self.current_bookshelf and not self.moving then
+    if (dir ~= nil and Input.down(dir)) and Input.pressed("confirm", false) and self.current_bookshelf and not self.moving then
         if self.fakeout ~= nil and not self.faked then
             self:setFlag("faked", true)
             self.faked = self:getFlag("faked", false)

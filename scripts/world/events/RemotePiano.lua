@@ -197,7 +197,7 @@ function RemotePiano:update()
         dir = "right"
     end
 
-    if Input.down(dir) and Input.pressed("confirm", false) and self.current_bookshelf then
+    if (dir ~= nil and Input.down(dir)) and Input.pressed("confirm", false) and self.current_bookshelf then
         if self.current_bookshelf.moving and dir ~= nil and (#self.current_bookshelf.storedinputs < 1 and dir ~= self.current_bookshelf.movedir) and dir ~= self.current_bookshelf.storedinputs[1] then
             table.insert(self.current_bookshelf.storedinputs, dir)
             table.insert(self.current_bookshelf.storedinputdementia, 0)

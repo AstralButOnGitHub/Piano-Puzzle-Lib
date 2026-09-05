@@ -4,11 +4,6 @@ local lib = {}
 Registry.registerGlobal("PianoPuzzleLib", lib)
 PianoPuzzleLib = lib
 
-function PianoPuzzleLib:onKeyPressed(key)
-    if key == "h" then
-    end
-end
-
 ---
 --- Returns a value eased between two numbers, determined by a percentage from 0 to 1.
 ---

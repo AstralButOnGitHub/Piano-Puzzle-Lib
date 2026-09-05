@@ -10,7 +10,7 @@ This library implements all the piano puzzles from Deltarune Chapter 4!
 
 # Sections
 
-## Moving Bookshelf Puzzles
+## Moving Bookshelves
 
 To make a moving bookshelf puzzle you'll need these things:
 
@@ -67,11 +67,11 @@ Make a new PasswordPanel event and give it the following properties:
 
 ![alt text](image-8.png)
 
-Also, You can make a ``MusicGat`` event with an object property called ``"piano"`` which should (obviously) be your piano.
+Also, You can make a ``MusicGate`` event with an object property called ``"piano"`` which should (obviously) be your piano.
 This is the gate that's used 1 time. (I made this one in a day it was so simple)
 ![alt text](image-9.png)
 
-## Moving Piano Segments
+## Moving Pianos
 Similar to the Moving Bookshelf Puzzles, Make your pianocollision layer (this is the walls, blah blah blah)
 Now the fun stuff, Make a ``MovingPiano`` event.
 ![alt text](image-10.png)
@@ -79,6 +79,13 @@ Now the fun stuff, Make a ``MovingPiano`` event.
 You can give it an object property called ``fakeout`` which should be a MovingBookshelf event.
 This is like the first Moving Piano in the 2nd Sanctuary.
 ![alt text](image-11.png)
+
+To keep with the 2nd Sanctuary additions,
+you can make a ``BreakableBookshelf`` event which will spawn in a.. you guessed it.. breakable bookshelf.
+You can set it's string property ``"special"`` to "music_gate" to switch it's texture (and particles) to the breakable music gate found in 3rd Sanctuary.
+There's also a string property ``"texture"`` which just overwrites the texture.
+![alt text](image-14.png) ![alt text](image-15.png)
+
 
 Also, You can make a ``PianoSpeedZone`` event which will change the piano's max speed when entering.
 This takes in a float property called ``"max_speed"`` (do I need to explain this?)
@@ -109,3 +116,15 @@ Also Also ***ALSO***, You can make a ``PianoExit`` event which will make the par
 | `sound` | `string` | `musicbox` | `any sound` | `The sound played when moved.` |
 | `max_speed` | `float` | `14` | `any float` | `The max speed the bookshelf can move.` |
 | `can_slow_down` | `boolean` | `true` | `true, false` | `Can the bookshelf be slowed down by BreakableBookshelf.` |
+
+### MovingPiano
+| Property | Type | Default | Values | Description |
+|-|-|-|-|-|
+| `type` | `string` | `pink` | `pink` | `The sprite.` |
+| `icontype` | `string` | `blue` | `blue, green, pink, red, twotone_green, twotone_purple` | `Sets the iconcolor and iconcolor_bright if they're unset.` |
+| `iconcolor` | `table (float)` | `COLORS.black` | `any RGBA table` | `The icon's color when inactive.` |
+| `iconcolor_bright` | `table (float)` | `COLORS.gray` | `any RGBA table` | `The icon's color when active.` |
+| `sound` | `string` | `piano` | `any sound` | `The sound played when moved.` |
+| `max_speed` | `float` | `14` | `any float` | `The max speed the piano can move.` |
+| `can_slow_down` | `boolean` | `true` | `true, false` | `Can the piano be slowed down by BreakableBookshelf.` |
+| `can_exit` | `boolean` | `true` | `true, false` | `Can the piano be slowed down by BreakableBookshelf.` |

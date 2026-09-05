@@ -26,11 +26,12 @@ function BreakableBookshelf:init(data)
     self.exploded = false
 end
 
-function BreakableBookshelf:holyFuckingShitExplode(bookshelf)
+function BreakableBookshelf:holyFuckingShitExplode(moving_object)
     self.exploded = true
     self.solid = false
-    if self.slow_down and bookshelf.can_slow_down then
-        bookshelf:setSpeed(bookshelf.velx * 0.7, bookshelf.vely * 0.7)
+    if self.slow_down == true and moving_object.can_slow_down == true then
+            moving_object.velx = moving_object.velx * 0.2
+            moving_object.vely = moving_object.vely * 0.2
     end
 
     if self.special == "music_gate" then
@@ -117,9 +118,9 @@ function BreakableBookshelf:update()
     if self.exploded then
         return
     end
-    for _, bookshelf in ipairs(Game.world.map:getEvents()) do
-        if bookshelf:includes(MovingObject) and self:meetsObject(bookshelf) then
-            self:holyFuckingShitExplode(bookshelf)
+    for _, event in ipairs(Game.world.map:getEvents()) do
+        if (event.id == "MovingBookshelf" or event.id == "MovingPiano") and self:meetsObject(event) then
+            self:holyFuckingShitExplode(event)
         end
     end
 end
