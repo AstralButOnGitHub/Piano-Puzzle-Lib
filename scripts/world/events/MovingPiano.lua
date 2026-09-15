@@ -118,6 +118,7 @@ end
 
 function MovingPiano:onInteract(player, dir)
     if dir == "up" then
+        self.world:setCameraTarget(self)
         self.characters = Game.world.followers
         Game.world.followers = {}
         self.player = player
@@ -126,7 +127,6 @@ function MovingPiano:onInteract(player, dir)
         local kry = self.y + 40 + 53
         local dist = math.max(MathUtils.round(MathUtils.dist(self.player.x, self.player.y, krx, kry) / 4), 1)
         dist = dist / 30
-        self.world:setCameraAttached(false)
         self.player:walkTo(krx, kry, dist, "up")
         for _, chara in ipairs(self.characters) do
             chara:walkTo(krx, kry, dist, "up")
@@ -183,7 +183,7 @@ function MovingPiano:exit()
         player:setParent(Game.world)
         player:setPosition(self.x + 40, self.y + 40 + 53)
         Game.world.can_open_menu = true
-        self.world:setCameraAttached(true)
+        self.world:setCameraTarget(self.player)
         self.player:resetSprite()
         for i, chara in ipairs(self.characters) do
             local follower = chara:convertToFollower()
@@ -417,15 +417,6 @@ function MovingPiano:update()
         if self.ui == nil then
             self.ui = MovingPianoUI(self)
             Game.stage:addChild(self.ui)
-        end
-    end
-    if self.controlled then
-        if not self.faked and self.fakeout then
-            Game.world.camera.x = MathUtils.lerp(Game.world.camera.x, self.fakeout.x, 0.15)
-            Game.world.camera.y = MathUtils.lerp(Game.world.camera.y, self.fakeout.y, 0.15)
-        else
-            Game.world.camera.x = MathUtils.lerp(Game.world.camera.x, self.x + 40, 0.15)
-            Game.world.camera.y = MathUtils.lerp(Game.world.camera.y, self.y + 40 + (self.yoffset), 0.15)
         end
     end
 
